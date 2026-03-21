@@ -7,7 +7,7 @@ export default function MyApp({ Component, pageProps }) {
     <>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Construction Store</title>
+        <title>Stanley — Construction Store</title>
       </Head>
       <Component {...pageProps} />
     </>
