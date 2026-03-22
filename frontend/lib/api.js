@@ -1,4 +1,8 @@
-const BASE = 'https://localhost:7242'
+const BASE = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, '')
+
+if (!BASE) {
+  throw new Error('NEXT_PUBLIC_API_BASE_URL is not configured')
+}
 
 async function request(path){
   const res = await fetch(`${BASE}${path}`)
