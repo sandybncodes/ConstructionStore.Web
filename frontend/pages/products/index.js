@@ -27,7 +27,7 @@ function SidebarSection({ title, children, defaultOpen = true }) {
 
 export default function Products() {
   const { addToCart } = useCart()
-  const { t } = useLanguage()
+  const { t, translateCategoryName } = useLanguage()
   const router = useRouter()
   const [allProducts, setAllProducts]   = useState([])
   const [categories, setCategories]     = useState([])
@@ -151,7 +151,7 @@ export default function Products() {
                       className={`shop-cat-btn${selectedCat === cat.id ? ' active' : ''}`}
                       onClick={() => { setSelectedCat(selectedCat === cat.id ? null : cat.id); setVisibleCount(PAGE_SIZE) }}
                     >
-                      {cat.name}
+                      {translateCategoryName(cat.name)}
                       <span className="shop-cat-count">({cat.products?.length ?? 0})</span>
                     </button>
                   </li>

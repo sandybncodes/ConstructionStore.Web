@@ -22,7 +22,7 @@ function Stars({ rating = 4 }) {
 export default function ProductDetails() {
   const router = useRouter()
   const { id } = router.query
-  const { t } = useLanguage()
+  const { t, translateCategoryName } = useLanguage()
 
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -86,7 +86,7 @@ export default function ProductDetails() {
               {product?.category && (
                 <>
                   <span>/</span>
-                  <span>{product.category.name}</span>
+                  <span>{translateCategoryName(product.category.name)}</span>
                 </>
               )}
               {product && (
@@ -275,7 +275,7 @@ export default function ProductDetails() {
                             <tr><th colSpan={2}>{t('technicalDetails')}</th></tr>
                           </thead>
                           <tbody>
-                            <tr><td>{t('category')}</td><td>{product.category?.name ?? '—'}</td></tr>
+                            <tr><td>{t('category')}</td><td>{product.category?.name ? translateCategoryName(product.category.name) : '—'}</td></tr>
                             <tr><td>{t('stock')}</td><td>{product.stockQuantity} {t('units')}</td></tr>
                             <tr><td>{t('price')}</td><td>{product.discount > 0 ? (product.price * (1 - product.discount / 100)).toFixed(2) : product.price?.toFixed(2)} MDL</td></tr>
                             <tr><td>{t('status')}</td><td>{product.isActive ? t('available') : t('unavailable')}</td></tr>
