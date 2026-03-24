@@ -46,6 +46,11 @@ export const translations = {
     heroBtn: 'VEZI PRODUSELE',
     popularProducts: 'Produse Populare',
     loadingProductsHome: 'Se încarcă produsele…',
+    navProductsWord: 'produse',
+    freeShippingReturns: 'Livrare și returnări gratuite',
+    estimatedDeliveryValue: 'Livrare 1-3 zile lucrătoare',
+    viewFullscreen: 'Vizualizare pe ecran complet',
+    closeFullscreen: 'Închide',
 
     // Products listing page
     shopByCategories: 'Categorii',
@@ -159,6 +164,13 @@ export const translations = {
     quantityLabel: 'Cantitate',
     addToCartAria: 'Adaugă {name} în coș',
     ratingAria: '{rating} din 5 stele',
+    productImageCount: '{count} imagini',
+    previousImage: 'Imaginea anterioară',
+    nextImage: 'Imaginea următoare',
+    viewImage: 'Vezi imaginea {index}',
+    productImageAlt: '{name} imaginea {index}',
+    galleryScrollHint: 'Răsfoiește toate imaginile produsului',
+    mainImage: 'Principală',
 
     // Category names (DB in Romanian — identity mapping for ro)
     categoryNames: {},
@@ -214,6 +226,11 @@ export const translations = {
     heroBtn: 'СМОТРЕТЬ ТОВАРЫ',
     popularProducts: 'Популярные товары',
     loadingProductsHome: 'Загрузка товаров…',
+    navProductsWord: 'товаров',
+    freeShippingReturns: 'Бесплатная доставка и возврат',
+    estimatedDeliveryValue: 'Доставка 1-3 рабочих дня',
+    viewFullscreen: 'Полноэкранный просмотр',
+    closeFullscreen: 'Закрыть',
 
     // Products listing page
     shopByCategories: 'Категории',
@@ -326,6 +343,13 @@ export const translations = {
     quantityLabel: 'Количество',
     addToCartAria: 'Добавить {name} в корзину',
     ratingAria: '{rating} из 5 звёзд',
+    productImageCount: '{count} изображений',
+    previousImage: 'Предыдущее изображение',
+    nextImage: 'Следующее изображение',
+    viewImage: 'Открыть изображение {index}',
+    productImageAlt: '{name} изображение {index}',
+    galleryScrollHint: 'Просмотрите все изображения товара',
+    mainImage: 'Основное',
 
     // Category names (keys = Romanian DB name, values = Russian translation)
     categoryNames: {
@@ -415,6 +439,11 @@ export const translations = {
     heroBtn: 'VIEW PRODUCTS',
     popularProducts: 'Popular Products',
     loadingProductsHome: 'Loading products…',
+    navProductsWord: 'products',
+    freeShippingReturns: 'Free shipping & returns',
+    estimatedDeliveryValue: 'Delivery within 1-3 business days',
+    viewFullscreen: 'View fullscreen',
+    closeFullscreen: 'Close',
 
     // Products listing page
     shopByCategories: 'Shop By Categories',
@@ -527,6 +556,13 @@ export const translations = {
     quantityLabel: 'Quantity',
     addToCartAria: 'Add {name} to cart',
     ratingAria: '{rating} out of 5 stars',
+    productImageCount: '{count} images',
+    previousImage: 'Previous image',
+    nextImage: 'Next image',
+    viewImage: 'View image {index}',
+    productImageAlt: '{name} image {index}',
+    galleryScrollHint: 'Browse every image assigned to this product',
+    mainImage: 'Main',
 
     // Category names (keys = Romanian DB name, values = English translation)
     categoryNames: {

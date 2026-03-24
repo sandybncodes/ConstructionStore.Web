@@ -5,6 +5,7 @@ import Footer from '../components/Footer'
 import { useCart } from '../lib/cartContext'
 import { createOrder } from '../lib/api'
 import { useLanguage } from '../lib/i18nContext'
+import { getPrimaryProductImage } from '../lib/productImages'
 
 function QuantityControl({ quantity, onDecrement, onIncrement, t }) {
   return (
@@ -152,7 +153,7 @@ export default function CartPage() {
                           <div className="cart-col-product cart-item-product">
                             <div className="cart-item-img">
                               <img
-                                src={product.imageUrl || product.image || '/resources/repair-tool.png'}
+                                src={getPrimaryProductImage(product)}
                                 alt={product.name}
                               />
                             </div>
