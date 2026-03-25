@@ -31,7 +31,7 @@ export default function Footer() {
                 <li><Link href="/">{t('footerFaq')}</Link></li>
                 <li><Link href="/">{t('footerShippingInfo')}</Link></li>
                 <li><Link href="/">{t('footerReturns')}</Link></li>
-                <li><Link href="/">{t('footerTrackOrder')}</Link></li>
+                <li><Link href="/track-order">{t('footerTrackOrder')}</Link></li>
               </ul>
             </div>
 
