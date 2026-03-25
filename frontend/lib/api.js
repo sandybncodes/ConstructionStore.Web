@@ -38,12 +38,13 @@ export async function createOrder(orderPayload) {
   return res.json()
 }
 
-export async function trackOrder(orderId, fullName, phone) {
-  const params = new URLSearchParams({ orderId, fullName, phone })
+export async function trackOrder(fullName, phone, orderId = null) {
+  const params = new URLSearchParams({ fullName, phone })
+  if (orderId) params.set('orderId', orderId)
   const res = await fetch(`${BASE}/api/orders/track?${params}`)
   if (!res.ok) {
     const txt = await res.text().catch(() => res.statusText)
     throw new Error(txt || 'Order not found')
   }
-  return res.json()
+  return res.json() // always returns an array
 }

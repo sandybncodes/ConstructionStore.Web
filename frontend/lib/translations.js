@@ -159,7 +159,7 @@ export const translations = {
 
     // Track Order page
     trackOrderTitle: 'Urmărire comandă',
-    trackOrderSubtitle: 'Introduceți datele comenzii pentru a verifica statusul acesteia.',
+    trackOrderSubtitle: 'Introduceți numele și telefonul pentru a vedea comenzile dvs. Adăugați opțional ID-ul comenzii pentru a căuta o comandă specifică.',
     trackOrderIdLabel: 'ID comandă',
     trackOrderIdPlaceholder: 'ex. 1234',
     trackOrderFullNameLabel: 'Nume complet',
@@ -188,6 +188,9 @@ export const translations = {
     trackOrderFullNameRequired: 'Numele complet este obligatoriu.',
     trackOrderPhoneRequired: 'Telefonul este obligatoriu.',
     trackOrderOrderIdInvalid: 'ID-ul comenzii trebuie să fie un număr valid.',
+    trackOrderIdOptional: '(opțional)',
+    trackOrderMultipleFound: 'Am găsit {count} comenzi pentru datele introduse.',
+    trackOrderSelectHint: 'Selectați o comandă pentru a vedea detaliile acesteia.',
 
     // ProductCard
     addToCartBtn: 'Adaugă în coș',
@@ -371,7 +374,7 @@ export const translations = {
 
     // Track Order page
     trackOrderTitle: 'Отследить заказ',
-    trackOrderSubtitle: 'Введите данные заказа для проверки его статуса.',
+    trackOrderSubtitle: 'Введите имя и телефон для просмотра ваших заказов. Опционально укажите ID заказа для поиска конкретного заказа.',
     trackOrderIdLabel: 'ID заказа',
     trackOrderIdPlaceholder: 'напр. 1234',
     trackOrderFullNameLabel: 'Полное имя',
@@ -400,6 +403,9 @@ export const translations = {
     trackOrderFullNameRequired: 'Необходимо указать полное имя.',
     trackOrderPhoneRequired: 'Необходимо указать телефон.',
     trackOrderOrderIdInvalid: 'ID заказа должен быть корректным числом.',
+    trackOrderIdOptional: '(необязательно)',
+    trackOrderMultipleFound: 'Найдено {count} заказов по вашим данным.',
+    trackOrderSelectHint: 'Выберите заказ, чтобы просмотреть его детали.',
 
     // ProductCard
     addToCartBtn: 'В корзину',
@@ -617,7 +623,7 @@ export const translations = {
 
     // Track Order page
     trackOrderTitle: 'Track Order',
-    trackOrderSubtitle: 'Enter your order details to check its current status.',
+    trackOrderSubtitle: 'Enter your name and phone number to view your orders. Optionally add an order number to look up a specific order.',
     trackOrderIdLabel: 'Order ID',
     trackOrderIdPlaceholder: 'e.g. 1234',
     trackOrderFullNameLabel: 'Full Name',
@@ -646,6 +652,9 @@ export const translations = {
     trackOrderFullNameRequired: 'Full name is required.',
     trackOrderPhoneRequired: 'Phone is required.',
     trackOrderOrderIdInvalid: 'Order ID must be a valid number.',
+    trackOrderIdOptional: '(optional)',
+    trackOrderMultipleFound: 'Found {count} orders for your details.',
+    trackOrderSelectHint: 'Select an order to view its details.',
 
     // ProductCard
     addToCartBtn: 'Add to Cart',

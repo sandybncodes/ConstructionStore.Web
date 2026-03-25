@@ -54,7 +54,8 @@ export default function TrackOrderPage() {
   const [formErrors, setFormErrors] = useState({})
   const [searching, setSearching] = useState(false)
   const [searchError, setSearchError] = useState(null)
-  const [order, setOrder] = useState(null)
+  const [orders, setOrders] = useState([])
+  const [expandedOrderId, setExpandedOrderId] = useState(null)
 
   function handleChange(e) {
     const { name, value } = e.target
@@ -64,9 +65,7 @@ export default function TrackOrderPage() {
 
   function validate() {
     const errors = {}
-    if (!form.orderId.trim()) {
-      errors.orderId = t('trackOrderOrderIdRequired')
-    } else if (!/^\d+$/.test(form.orderId.trim())) {
+    if (form.orderId.trim() && !/^\d+$/.test(form.orderId.trim())) {
       errors.orderId = t('trackOrderOrderIdInvalid')
     }
     if (!form.fullName.trim()) errors.fullName = t('trackOrderFullNameRequired')
@@ -81,15 +80,14 @@ export default function TrackOrderPage() {
 
     setSearching(true)
     setSearchError(null)
-    setOrder(null)
+    setOrders([])
+    setExpandedOrderId(null)
 
     try {
-      const result = await trackOrder(
-        parseInt(form.orderId.trim(), 10),
-        form.fullName.trim(),
-        form.phone.trim()
-      )
-      setOrder(result)
+      const orderId = form.orderId.trim() ? parseInt(form.orderId.trim(), 10) : null
+      const result = await trackOrder(form.fullName.trim(), form.phone.trim(), orderId)
+      setOrders(result)
+      if (result.length === 1) setExpandedOrderId(result[0].id)
     } catch {
       setSearchError(t('trackOrderNotFound'))
     } finally {
@@ -97,21 +95,26 @@ export default function TrackOrderPage() {
     }
   }
 
-  // Determine current step
-  const currentStepIndex = order ? getStepIndex(order.status) : -1
+  function toggleOrder(id) {
+    setExpandedOrderId(prev => prev === id ? null : id)
+  }
 
-  // Status badge colour map
-  const statusClass = {
-    NOU: 'track-status--new',
-    PREPARING: 'track-status--preparing',
-    DELIVERED: 'track-status--delivered',
-  }[(order?.status ?? '').trim().toUpperCase()] ?? 'track-status--unknown'
+  // Helper: status class and label
+  function getStatusClass(status) {
+    return {
+      NOU: 'track-status--new',
+      PREPARING: 'track-status--preparing',
+      DELIVERED: 'track-status--delivered',
+    }[(status ?? '').trim().toUpperCase()] ?? 'track-status--unknown'
+  }
 
-  const statusLabel = {
-    NOU: t('trackOrderStatusNew'),
-    PREPARING: t('trackOrderStatusPreparing'),
-    DELIVERED: t('trackOrderStatusDelivered'),
-  }[(order?.status ?? '').trim().toUpperCase()] ?? (order?.status ?? '')
+  function getStatusLabel(status) {
+    return {
+      NOU: t('trackOrderStatusNew'),
+      PREPARING: t('trackOrderStatusPreparing'),
+      DELIVERED: t('trackOrderStatusDelivered'),
+    }[(status ?? '').trim().toUpperCase()] ?? (status ?? '')
+  }
 
   // Format date + time
   function formatDateTime(iso) {
@@ -121,6 +124,123 @@ export default function TrackOrderPage() {
       year: 'numeric', month: '2-digit', day: '2-digit',
       hour: '2-digit', minute: '2-digit',
     })
+  }
+
+  // Render full order content (timeline + details grid + items)
+  function renderOrderContent(order) {
+    const currentStepIndex = getStepIndex(order.status)
+    const statusClass = getStatusClass(order.status)
+    const statusLabel = getStatusLabel(order.status)
+
+    return (
+      <>
+        {/* ── Status path / timeline ── */}
+        <div className="track-timeline">
+          {STATUS_STEPS.map((step, idx) => {
+            const done = idx < currentStepIndex
+            const active = idx === currentStepIndex
+            const pending = idx > currentStepIndex
+
+            const stepLabel = {
+              NOU: t('trackOrderStatusNew'),
+              PREPARING: t('trackOrderStatusPreparing'),
+              DELIVERED: t('trackOrderStatusDelivered'),
+            }[step]
+
+            return (
+              <div key={step} className="track-timeline-step">
+                {idx > 0 && (
+                  <div className={`track-timeline-line ${done || active ? 'track-timeline-line--filled' : ''}`} />
+                )}
+                <div className={`track-timeline-node ${done ? 'tn-done' : active ? 'tn-active' : 'tn-pending'}`}>
+                  {done ? CHECK_ICON : STEP_ICONS[step]}
+                </div>
+                <span className={`track-timeline-label ${pending ? 'tl-pending' : ''}`}>
+                  {stepLabel}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* ── Details grid ── */}
+        <div className="track-details-grid">
+          <div className="track-detail-cell">
+            <span className="tdc-key">{t('trackOrderIdField')}</span>
+            <span className="tdc-value tdc-id">#{order.id}</span>
+          </div>
+          <div className="track-detail-cell">
+            <span className="tdc-key">{t('trackOrderDateField')}</span>
+            <span className="tdc-value">{formatDateTime(order.orderDate)}</span>
+          </div>
+          <div className="track-detail-cell">
+            <span className="tdc-key">{t('trackOrderStatusField')}</span>
+            <span className={`tdc-value tdc-status ${statusClass}`}>{statusLabel}</span>
+          </div>
+          <div className="track-detail-cell tdc-wide">
+            <span className="tdc-key">{t('trackOrderAddressField')}</span>
+            <span className="tdc-value">{order.address}</span>
+          </div>
+          {order.notes && (
+            <div className="track-detail-cell tdc-wide">
+              <span className="tdc-key">{t('trackOrderNotesField')}</span>
+              <span className="tdc-value">{order.notes}</span>
+            </div>
+          )}
+          <div className="track-detail-cell">
+            <span className="tdc-key">{t('trackOrderTotalField')}</span>
+            <span className="tdc-value tdc-total">{Number(order.totalPrice).toFixed(2)} MDL</span>
+          </div>
+        </div>
+
+        {/* ── Items ── */}
+        {order.items && order.items.length > 0 && (
+          <div className="track-items-section">
+            <h3 className="track-items-heading">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <path d="M16 10a4 4 0 0 1-8 0"/>
+              </svg>
+              {t('trackOrderItemsTitle')}
+            </h3>
+            <div className="track-items-table-wrap">
+              <table className="track-items-table">
+                <thead>
+                  <tr>
+                    <th>{t('trackOrderItemProduct')}</th>
+                    <th className="col-num">{t('trackOrderItemQty')}</th>
+                    <th className="col-num">{t('trackOrderItemPrice')}</th>
+                    <th className="col-num">{t('trackOrderItemTotal')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {order.items.map((item, idx) => (
+                    <tr key={idx}>
+                      <td>
+                        <div className="track-item-product">
+                          <img
+                            src={item.productImageUrl || FALLBACK_PRODUCT_IMAGE}
+                            alt={item.productName || `#${item.productId}`}
+                            className="track-item-img"
+                            onError={e => { e.currentTarget.src = FALLBACK_PRODUCT_IMAGE }}
+                          />
+                          <span>{item.productName ? translateProductName(item.productName) : `#${item.productId}`}</span>
+                        </div>
+                      </td>
+                      <td className="col-num">{item.quantity}</td>
+                      <td className="col-num">{Number(item.price).toFixed(2)} MDL</td>
+                      <td className="col-num col-total">{Number(item.lineTotal).toFixed(2)} MDL</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </>
+    )
   }
 
   return (
@@ -163,8 +283,12 @@ export default function TrackOrderPage() {
           <div className="track-card">
             <form onSubmit={handleSubmit} noValidate>
               <div className="track-form-row">
+                {/* Order ID — optional */}
                 <div className="track-field">
-                  <label htmlFor="orderId">{t('trackOrderIdLabel')}</label>
+                  <label htmlFor="orderId">
+                    {t('trackOrderIdLabel')}
+                    <span className="field-optional">{t('trackOrderIdOptional')}</span>
+                  </label>
                   <input
                     id="orderId"
                     name="orderId"
@@ -179,8 +303,12 @@ export default function TrackOrderPage() {
                   {formErrors.orderId && <span className="field-error">{formErrors.orderId}</span>}
                 </div>
 
+                {/* Full Name — required */}
                 <div className="track-field">
-                  <label htmlFor="fullName">{t('trackOrderFullNameLabel')}</label>
+                  <label htmlFor="fullName">
+                    {t('trackOrderFullNameLabel')}
+                    <span className="field-required" aria-hidden="true"> *</span>
+                  </label>
                   <input
                     id="fullName"
                     name="fullName"
@@ -190,12 +318,17 @@ export default function TrackOrderPage() {
                     onChange={handleChange}
                     className={formErrors.fullName ? 'input-error' : ''}
                     autoComplete="name"
+                    required
                   />
                   {formErrors.fullName && <span className="field-error">{formErrors.fullName}</span>}
                 </div>
 
+                {/* Phone — required */}
                 <div className="track-field">
-                  <label htmlFor="phone">{t('trackOrderPhoneLabel')}</label>
+                  <label htmlFor="phone">
+                    {t('trackOrderPhoneLabel')}
+                    <span className="field-required" aria-hidden="true"> *</span>
+                  </label>
                   <input
                     id="phone"
                     name="phone"
@@ -245,129 +378,69 @@ export default function TrackOrderPage() {
             </div>
           )}
 
-          {/* ── Result ── */}
-          {order && (
+          {/* ── Single order result ── */}
+          {orders.length === 1 && (
             <div className="track-result-wrap">
-
-              {/* Header row: title + status badge */}
               <div className="track-result-header">
                 <h2 className="track-result-title">{t('trackOrderFound')}</h2>
-                <div className={`track-status-pill ${statusClass}`}>
-                  {STEP_ICONS[(order.status ?? '').trim().toUpperCase()]}
-                  <span>{statusLabel}</span>
+                <div className={`track-status-pill ${getStatusClass(orders[0].status)}`}>
+                  {STEP_ICONS[(orders[0].status ?? '').trim().toUpperCase()]}
+                  <span>{getStatusLabel(orders[0].status)}</span>
                 </div>
               </div>
+              {renderOrderContent(orders[0])}
+            </div>
+          )}
 
-              {/* ── Status path / timeline ── */}
-              <div className="track-timeline">
-                {STATUS_STEPS.map((step, idx) => {
-                  const done = idx < currentStepIndex
-                  const active = idx === currentStepIndex
-                  const pending = idx > currentStepIndex
-                  const isLast = idx === STATUS_STEPS.length - 1
+          {/* ── Multiple orders accordion ── */}
+          {orders.length > 1 && (
+            <div className="track-orders-list">
+              <div className="track-orders-list-header">
+                <h2 className="track-orders-list-title">
+                  {t('trackOrderMultipleFound').replace('{count}', orders.length)}
+                </h2>
+                <p className="track-orders-list-hint">{t('trackOrderSelectHint')}</p>
+              </div>
 
-                  const stepLabel = {
-                    NOU: t('trackOrderStatusNew'),
-                    PREPARING: t('trackOrderStatusPreparing'),
-                    DELIVERED: t('trackOrderStatusDelivered'),
-                  }[step]
-
-                  return (
-                    <div key={step} className="track-timeline-step">
-                      {/* connector line before (not first) */}
-                      {idx > 0 && (
-                        <div className={`track-timeline-line ${done || active ? 'track-timeline-line--filled' : ''}`} />
-                      )}
-
-                      <div className={`track-timeline-node ${done ? 'tn-done' : active ? 'tn-active' : 'tn-pending'}`}>
-                        {done ? CHECK_ICON : STEP_ICONS[step]}
+              {orders.map(order => {
+                const isOpen = expandedOrderId === order.id
+                const statusClass = getStatusClass(order.status)
+                const statusLabel = getStatusLabel(order.status)
+                return (
+                  <div key={order.id} className={`track-accordion-item ${isOpen ? 'is-open' : ''}`}>
+                    <button
+                      type="button"
+                      className="track-accordion-header"
+                      onClick={() => toggleOrder(order.id)}
+                      aria-expanded={isOpen}
+                    >
+                      <div className="tah-left">
+                        <span className="tah-id">#{order.id}</span>
+                        <span className="tah-date">{formatDateTime(order.orderDate)}</span>
                       </div>
-
-                      <span className={`track-timeline-label ${pending ? 'tl-pending' : ''}`}>
-                        {stepLabel}
-                      </span>
-                    </div>
-                  )
-                })}
-              </div>
-
-              {/* ── Details grid ── */}
-              <div className="track-details-grid">
-                <div className="track-detail-cell">
-                  <span className="tdc-key">{t('trackOrderIdField')}</span>
-                  <span className="tdc-value tdc-id">#{order.id}</span>
-                </div>
-                <div className="track-detail-cell">
-                  <span className="tdc-key">{t('trackOrderDateField')}</span>
-                  <span className="tdc-value">{formatDateTime(order.orderDate)}</span>
-                </div>
-                <div className="track-detail-cell">
-                  <span className="tdc-key">{t('trackOrderStatusField')}</span>
-                  <span className={`tdc-value tdc-status ${statusClass}`}>{statusLabel}</span>
-                </div>
-                <div className="track-detail-cell tdc-wide">
-                  <span className="tdc-key">{t('trackOrderAddressField')}</span>
-                  <span className="tdc-value">{order.address}</span>
-                </div>
-                {order.notes && (
-                  <div className="track-detail-cell tdc-wide">
-                    <span className="tdc-key">{t('trackOrderNotesField')}</span>
-                    <span className="tdc-value">{order.notes}</span>
+                      <div className="tah-right">
+                        <div className={`track-status-pill ${statusClass}`}>
+                          {STEP_ICONS[(order.status ?? '').trim().toUpperCase()]}
+                          <span>{statusLabel}</span>
+                        </div>
+                        <svg
+                          className={`tah-chevron ${isOpen ? 'tah-chevron--open' : ''}`}
+                          width="20" height="20" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" strokeWidth="2.5"
+                          strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+                        >
+                          <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                      </div>
+                    </button>
+                    {isOpen && (
+                      <div className="track-accordion-body">
+                        {renderOrderContent(order)}
+                      </div>
+                    )}
                   </div>
-                )}
-                <div className="track-detail-cell">
-                  <span className="tdc-key">{t('trackOrderTotalField')}</span>
-                  <span className="tdc-value tdc-total">{Number(order.totalPrice).toFixed(2)} MDL</span>
-                </div>
-              </div>
-
-              {/* ── Items ── */}
-              {order.items && order.items.length > 0 && (
-                <div className="track-items-section">
-                  <h3 className="track-items-heading">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-                      <line x1="3" y1="6" x2="21" y2="6"/>
-                      <path d="M16 10a4 4 0 0 1-8 0"/>
-                    </svg>
-                    {t('trackOrderItemsTitle')}
-                  </h3>
-
-                  <div className="track-items-table-wrap">
-                    <table className="track-items-table">
-                      <thead>
-                        <tr>
-                          <th>{t('trackOrderItemProduct')}</th>
-                          <th className="col-num">{t('trackOrderItemQty')}</th>
-                          <th className="col-num">{t('trackOrderItemPrice')}</th>
-                          <th className="col-num">{t('trackOrderItemTotal')}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {order.items.map((item, idx) => (
-                          <tr key={idx}>
-                            <td>
-                              <div className="track-item-product">
-                                <img
-                                  src={item.productImageUrl || FALLBACK_PRODUCT_IMAGE}
-                                  alt={item.productName || `#${item.productId}`}
-                                  className="track-item-img"
-                                  onError={e => { e.currentTarget.src = FALLBACK_PRODUCT_IMAGE }}
-                                />
-                                <span>{item.productName ? translateProductName(item.productName) : `#${item.productId}`}</span>
-                              </div>
-                            </td>
-                            <td className="col-num">{item.quantity}</td>
-                            <td className="col-num">{Number(item.price).toFixed(2)} MDL</td>
-                            <td className="col-num col-total">{Number(item.lineTotal).toFixed(2)} MDL</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
+                )
+              })}
             </div>
           )}
         </div>
@@ -375,7 +448,7 @@ export default function TrackOrderPage() {
 
       <Footer />
 
-      <style jsx>{`
+      <style jsx global>{`
         /* ── Page ── */
         .track-page {
           min-height: 100vh;
@@ -664,6 +737,17 @@ export default function TrackOrderPage() {
         .tdc-total { font-weight: 800; font-size: 1.15rem; color: #2563eb; }
         .tdc-status { font-weight: 700; }
 
+        /* ── Label decorators ── */
+        .field-required { color: #dc2626; font-weight: 700; }
+        .field-optional {
+          margin-left: 6px;
+          font-size: .75rem;
+          font-weight: 500;
+          color: #9ca3af;
+          text-transform: none;
+          letter-spacing: 0;
+        }
+
         /* ── Items ── */
         .track-items-section { }
         .track-items-heading {
@@ -720,6 +804,93 @@ export default function TrackOrderPage() {
           border: 1px solid #e5e7eb;
           flex-shrink: 0;
           background: #f9fafb;
+        }
+
+        /* ── Multiple orders list ── */
+        .track-orders-list {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .track-orders-list-header {
+          margin-bottom: 4px;
+        }
+        .track-orders-list-title {
+          font-size: 1.15rem;
+          font-weight: 800;
+          margin: 0 0 4px;
+          color: #111827;
+        }
+        .track-orders-list-hint {
+          font-size: .88rem;
+          color: #6b7280;
+          margin: 0;
+        }
+
+        /* ── Accordion ── */
+        .track-accordion-item {
+          background: #fff;
+          border: 1.5px solid #e5e7eb;
+          border-radius: 14px;
+          overflow: hidden;
+          box-shadow: 0 1px 4px rgba(0,0,0,.05);
+          transition: border-color .15s, box-shadow .15s;
+        }
+        .track-accordion-item.is-open {
+          border-color: #2563eb;
+          box-shadow: 0 0 0 3px rgba(37,99,235,.08), 0 2px 8px rgba(0,0,0,.07);
+        }
+        .track-accordion-header {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          padding: 18px 22px;
+          background: none;
+          border: none;
+          cursor: pointer;
+          text-align: left;
+          transition: background .12s;
+        }
+        .track-accordion-header:hover { background: #f9fafb; }
+        .track-accordion-item.is-open .track-accordion-header { background: #eff6ff; }
+        .tah-left {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          flex-wrap: wrap;
+        }
+        .tah-id {
+          font-size: 1rem;
+          font-weight: 800;
+          color: #111827;
+        }
+        .tah-date {
+          font-size: .87rem;
+          color: #6b7280;
+        }
+        .tah-right {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-shrink: 0;
+        }
+        .tah-chevron {
+          color: #6b7280;
+          transition: transform .2s;
+          flex-shrink: 0;
+        }
+        .tah-chevron--open { transform: rotate(180deg); color: #2563eb; }
+        .track-accordion-body {
+          padding: 0 22px 22px;
+          border-top: 1px solid #e5e7eb;
+        }
+        .track-accordion-body > * { margin-top: 22px; }
+        @media (max-width: 600px) {
+          .track-accordion-header { padding: 14px 16px; }
+          .track-accordion-body { padding: 0 16px 16px; }
+          .tah-right .track-status-pill { display: none; }
         }
       `}</style>
     </>
