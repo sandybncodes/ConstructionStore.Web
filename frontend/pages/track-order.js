@@ -6,6 +6,7 @@ import Footer from '../components/Footer'
 import { trackOrder } from '../lib/api'
 import { useLanguage } from '../lib/i18nContext'
 import { FALLBACK_PRODUCT_IMAGE } from '../lib/productImages'
+import { downloadOrderPdf } from '../lib/orderPdf'
 
 // ── Status steps definition ──────────────────────────────────────────────────
 const STATUS_STEPS = ['NOU', 'PREPARING', 'DELIVERED']
@@ -56,6 +57,7 @@ export default function TrackOrderPage() {
   const [searchError, setSearchError] = useState(null)
   const [orders, setOrders] = useState([])
   const [expandedOrderId, setExpandedOrderId] = useState(null)
+  const [downloadingPdfId, setDownloadingPdfId] = useState(null)
 
   function handleChange(e) {
     const { name, value } = e.target
@@ -239,6 +241,27 @@ export default function TrackOrderPage() {
             </div>
           </div>
         )}
+
+        {/* ── Download PDF button ── */}
+        <div className="track-download-row">
+          <button
+            className="btn-download-pdf"
+            disabled={downloadingPdfId === order.id}
+            onClick={async () => {
+              setDownloadingPdfId(order.id)
+              try { await downloadOrderPdf(order, t, translateProductName) }
+              finally { setDownloadingPdfId(null) }
+            }}
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            {downloadingPdfId === order.id ? '…' : t('downloadOrderPdf')}
+          </button>
+        </div>
       </>
     )
   }
@@ -891,6 +914,15 @@ export default function TrackOrderPage() {
           .track-accordion-header { padding: 14px 16px; }
           .track-accordion-body { padding: 0 16px 16px; }
           .tah-right .track-status-pill { display: none; }
+        }
+
+        /* ── Download PDF button row ── */
+        .track-download-row {
+          display: flex;
+          justify-content: flex-end;
+          margin-top: 20px;
+          padding-top: 16px;
+          border-top: 1px solid #f3f4f6;
         }
       `}</style>
     </>

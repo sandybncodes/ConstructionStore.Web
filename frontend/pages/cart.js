@@ -6,6 +6,7 @@ import { useCart } from '../lib/cartContext'
 import { createOrder } from '../lib/api'
 import { useLanguage } from '../lib/i18nContext'
 import { getPrimaryProductImage } from '../lib/productImages'
+import { downloadOrderPdf } from '../lib/orderPdf'
 
 function QuantityControl({ quantity, onDecrement, onIncrement, t }) {
   return (
@@ -19,7 +20,7 @@ function QuantityControl({ quantity, onDecrement, onIncrement, t }) {
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, clearCart, totalPrice } = useCart()
-  const { t } = useLanguage()
+  const { t, translateProductName } = useLanguage()
 
   const [showCheckout, setShowCheckout] = useState(false)
   const [form, setForm] = useState({ fullName: '', phone: '', address: '', email: '', notes: '' })
@@ -27,6 +28,8 @@ export default function CartPage() {
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState(null)
   const [orderSuccess, setOrderSuccess] = useState(null)
+  const [orderSnapshot, setOrderSnapshot] = useState(null)
+  const [downloadingPdf, setDownloadingPdf] = useState(false)
   const checkoutRef = useRef(null)
 
   function handleFormChange(e) {
@@ -65,7 +68,32 @@ export default function CartPage() {
 
     try {
       const result = await createOrder(payload)
+      // Build a full snapshot before the cart is cleared so the PDF has all fields.
+      const snapshot = {
+        id: result.id,
+        orderToken: result.orderToken,
+        orderDate: new Date().toISOString(),
+        status: 'NOU',
+        totalPrice: result.totalPrice,
+        customerFullName: form.fullName.trim(),
+        phone: form.phone.trim(),
+        address: form.address.trim(),
+        email: form.email.trim() || null,
+        notes: form.notes.trim() || null,
+        items: cart.map(({ product, quantity, discount }) => {
+          const effectivePrice = product.price * (1 - (discount || 0) / 100)
+          return {
+            productId: product.id,
+            productName: product.name,
+            productImageUrl: getPrimaryProductImage(product),
+            quantity,
+            price: effectivePrice,
+            lineTotal: effectivePrice * quantity,
+          }
+        }),
+      }
       clearCart()
+      setOrderSnapshot(snapshot)
       setOrderSuccess(result)
       setShowCheckout(false)
     } catch (err) {
@@ -113,9 +141,29 @@ export default function CartPage() {
             <p>{t('thankYouOrder', { id: orderSuccess.id })}</p>
             <p className="checkout-success-token">{t('referenceToken')} <code>{orderSuccess.orderToken}</code></p>
             <p className="checkout-success-total">{t('orderTotal')} <strong>{Number(orderSuccess.totalPrice).toFixed(2)} MDL</strong></p>
-            <Link href="/products" className="btn-yellow" style={{ marginTop: '1rem', display: 'inline-block' }}>
-              {t('continueShopping')}
-            </Link>
+            <div className="checkout-success-actions">
+              <Link href="/products" className="btn-yellow" style={{ display: 'inline-block' }}>
+                {t('continueShopping')}
+              </Link>
+              {orderSnapshot && (
+                <button
+                  className="btn-download-pdf"
+                  disabled={downloadingPdf}
+                  onClick={async () => {
+                    setDownloadingPdf(true)
+                    try { await downloadOrderPdf(orderSnapshot, t, translateProductName) }
+                    finally { setDownloadingPdf(false) }
+                  }}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  {downloadingPdf ? '…' : t('downloadOrderPdf')}
+                </button>
+              )}
+            </div>
           </div>
         )}
 

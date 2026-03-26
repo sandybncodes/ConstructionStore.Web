@@ -192,6 +192,14 @@ export const translations = {
     trackOrderMultipleFound: 'Am găsit {count} comenzi pentru datele introduse.',
     trackOrderSelectHint: 'Selectați o comandă pentru a vedea detaliile acesteia.',
 
+    // PDF download
+    downloadOrderPdf: 'Descarcă bon PDF',
+    pdfStoreName: 'Magazin de Construcții',
+    pdfOrderReceipt: 'Bon de comandă',
+    pdfCustomerInfo: 'Informații client',
+    pdfFooterThanks: 'Vă mulțumim pentru comandă!',
+    pdfFooterGenerated: 'Generat',
+
     // ProductCard
     addToCartBtn: 'Adaugă în coș',
     added: 'Adăugat!',
@@ -406,6 +414,14 @@ export const translations = {
     trackOrderIdOptional: '(необязательно)',
     trackOrderMultipleFound: 'Найдено {count} заказов по вашим данным.',
     trackOrderSelectHint: 'Выберите заказ, чтобы просмотреть его детали.',
+
+    // PDF download
+    downloadOrderPdf: 'Скачать PDF-квитанцию',
+    pdfStoreName: 'Строительный магазин',
+    pdfOrderReceipt: 'Квитанция заказа',
+    pdfCustomerInfo: 'Данные клиента',
+    pdfFooterThanks: 'Спасибо за ваш заказ!',
+    pdfFooterGenerated: 'Создан',
 
     // ProductCard
     addToCartBtn: 'В корзину',
@@ -655,6 +671,14 @@ export const translations = {
     trackOrderIdOptional: '(optional)',
     trackOrderMultipleFound: 'Found {count} orders for your details.',
     trackOrderSelectHint: 'Select an order to view its details.',
+
+    // PDF download
+    downloadOrderPdf: 'Download PDF Receipt',
+    pdfStoreName: 'Construction Store',
+    pdfOrderReceipt: 'Order Receipt',
+    pdfCustomerInfo: 'Customer Information',
+    pdfFooterThanks: 'Thank you for your order!',
+    pdfFooterGenerated: 'Generated',
 
     // ProductCard
     addToCartBtn: 'Add to Cart',

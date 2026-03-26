@@ -2775,6 +2775,41 @@ header {
   margin: 6px 0 0;
 }
 
+.checkout-success-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.btn-download-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 20px;
+  background: #fff;
+  color: #2563eb;
+  border: 1.5px solid #2563eb;
+  border-radius: 8px;
+  font-size: .93rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, color .15s, transform .1s;
+  text-decoration: none;
+}
+
+.btn-download-pdf:hover:not(:disabled) {
+  background: #eff6ff;
+  transform: translateY(-1px);
+}
+
+.btn-download-pdf:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
 @media (max-width: 640px) {
   .checkout-section {
     padding: 24px 18px;
