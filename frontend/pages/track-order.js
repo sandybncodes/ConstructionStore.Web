@@ -250,6 +250,7 @@ export default function TrackOrderPage() {
             onClick={async () => {
               setDownloadingPdfId(order.id)
               try { await downloadOrderPdf(order, t, translateProductName) }
+              catch (e) { console.error('PDF download failed:', e) }
               finally { setDownloadingPdfId(null) }
             }}
           >

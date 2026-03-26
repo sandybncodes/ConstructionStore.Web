@@ -152,6 +152,7 @@ export default function CartPage() {
                   onClick={async () => {
                     setDownloadingPdf(true)
                     try { await downloadOrderPdf(orderSnapshot, t, translateProductName) }
+                    catch (e) { console.error('PDF download failed:', e) }
                     finally { setDownloadingPdf(false) }
                   }}
                 >

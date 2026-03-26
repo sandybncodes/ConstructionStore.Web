@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard'
 import Link from 'next/link'
 import { getProducts, getCategories } from '../lib/api'
 import { useLanguage } from '../lib/i18nContext'
+import { useCart } from '../lib/cartContext'
 
 const RATING_CYCLE = [4, 4.5, 4, 4, 4.5]
 
@@ -21,6 +22,7 @@ export default function Home() {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const { t, translateCategoryName } = useLanguage()
+  const { addToCart } = useCart()
 
   useEffect(() => {
     getProducts()
@@ -123,6 +125,7 @@ export default function Home() {
                     key={p.id}
                     product={p}
                     rating={RATING_CYCLE[i % RATING_CYCLE.length]}
+                    onAddToCart={(qty) => addToCart(p, p.discount || 0, qty)}
                   />
                 ))}
               </div>

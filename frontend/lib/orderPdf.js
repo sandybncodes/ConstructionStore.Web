@@ -266,6 +266,40 @@ export async function downloadOrderPdf(order, t, translateProductName) {
     PAGE_W / 2, PAGE_H - 3, { align: 'center' }
   )
 
-  // ── Save ─────────────────────────────────────────────────────────────────
-  doc.save(`order-${order.id}.pdf`)
+  // ── Save (mobile-compatible) ──────────────────────────────────────────────
+  const pdfBlob = doc.output('blob')
+  const fileName = `order-${order.id}.pdf`
+  const blobUrl = URL.createObjectURL(pdfBlob)
+
+  // Mobile Safari ignores the <a download> attribute on blob URLs and
+  // programmatic clicks lose the user-gesture context after awaits.
+  // Use Web Share API with file on mobile when available, else open the blob.
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent || '')
+  let shared = false
+
+  if (isMobile && navigator.share) {
+    try {
+      const file = new File([pdfBlob], fileName, { type: 'application/pdf' })
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: fileName })
+        shared = true
+      }
+    } catch (_) { /* user cancelled or API unavailable */ }
+  }
+
+  if (!shared) {
+    if (isMobile) {
+      // Fallback: open blob URL directly — browser will display/download the PDF
+      window.location.href = blobUrl
+    } else {
+      const a = document.createElement('a')
+      a.href = blobUrl
+      a.download = fileName
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+    }
+  }
+
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 60000)
 }
