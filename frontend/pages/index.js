@@ -21,6 +21,7 @@ function CategoryIcon() {
 export default function Home() {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
+  const [loadingProducts, setLoadingProducts] = useState(true)
   const { t, translateCategoryName } = useLanguage()
   const { addToCart } = useCart()
 
@@ -28,12 +29,13 @@ export default function Home() {
     getProducts()
       .then(data => setProducts(data || []))
       .catch(() => {})
+      .finally(() => setLoadingProducts(false))
     getCategories()
       .then(data => setCategories(data || []))
       .catch(() => {})
   }, [])
 
-  const displayed = products.slice(0, 5)
+  const discountProducts = products.filter(p => p.discount > 0)
   const displayedCategories = categories.slice(0, 8)
 
   return (
@@ -106,21 +108,23 @@ export default function Home() {
             </section>
           )}
 
-          {/* ══ Popular Products ══ */}
+          {/* ══ Discount Products ══ */}
           <section className="home-section">
             <div className="home-section-head">
-              <h2 className="section-title">{t('popularProducts')}</h2>
+              <h2 className="section-title">{t('discountProducts')}</h2>
               <Link href="/products" className="home-section-link">{t('heroBtn')} →</Link>
             </div>
 
-            {displayed.length === 0 ? (
+            {loadingProducts ? (
               <div className="home-loading">
                 <div className="home-loading-spinner" />
                 <span>{t('loadingProductsHome')}</span>
               </div>
+            ) : discountProducts.length === 0 ? (
+              <p className="home-no-discount">{t('noDiscountProducts')}</p>
             ) : (
               <div className="popular-products-grid">
-                {displayed.map((p, i) => (
+                {discountProducts.map((p, i) => (
                   <ProductCard
                     key={p.id}
                     product={p}

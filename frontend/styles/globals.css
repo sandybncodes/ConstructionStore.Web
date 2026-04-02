@@ -393,6 +393,12 @@ header {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+.home-no-discount {
+  padding: 48px 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
 /* ── Fullscreen Lightbox ── */
 .pd-lightbox {
   position: fixed;
