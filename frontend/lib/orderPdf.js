@@ -70,13 +70,15 @@ export async function downloadOrderPdf(order, t, translateProductName) {
   doc.setFont(FONT, 'bold')
   doc.setFontSize(18)
   doc.setTextColor(255, 255, 255)
-  text('ZIDEX', MARGIN, 12)
+  text('MIRDAV', MARGIN, 10)
+  doc.setFont(FONT, 'normal')
+  doc.setFontSize(11)
+  text('COMPANY', MARGIN, 16)
 
   doc.setFont(FONT, 'normal')
   doc.setFontSize(9)
   doc.setTextColor(191, 219, 254)
-  text(t('pdfStoreName') || 'Magazin de Construcții', MARGIN, 18)
-  text('zidex.md', MARGIN, 23)
+  text(t('pdfStoreName') || 'Magazin de Construcții', MARGIN, 22)
 
   doc.setFont(FONT, 'bold')
   doc.setFontSize(11)

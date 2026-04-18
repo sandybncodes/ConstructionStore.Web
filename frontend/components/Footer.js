@@ -11,7 +11,7 @@ export default function Footer() {
           <div className="row g-4">
 
             <div className="col-md-3">
-              <h5>Zidex</h5>
+              <h5 style={{lineHeight: 1.1}}><span style={{fontWeight: 700, display: 'block'}}>MIRDAV</span><span style={{fontWeight: 400, fontSize: '0.7em'}}>COMPANY</span></h5>
               <p>{t('footerTagline')}</p>
             </div>
 

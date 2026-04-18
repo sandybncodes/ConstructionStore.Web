@@ -4,7 +4,7 @@ export const translations = {
   ══════════════════════════════════════════ */
   ro: {
     // Site
-    siteTitle: 'Zidex — Magazin de Construcții',
+    siteTitle: 'MirDav Company — Magazin de Construcții',
 
     // Nav
     navHome: 'Acasă',
@@ -230,7 +230,7 @@ export const translations = {
   ══════════════════════════════════════════ */
   ru: {
     // Site
-    siteTitle: 'Zidex — Строительный магазин',
+    siteTitle: 'MirDav Company — Строительный магазин',
 
     // Nav
     navHome: 'Главная',
@@ -489,7 +489,7 @@ export const translations = {
   ══════════════════════════════════════════ */
   en: {
     // Site
-    siteTitle: 'Zidex — Construction Store',
+    siteTitle: 'MirDav Company — Construction Store',
 
     // Nav
     navHome: 'Home',

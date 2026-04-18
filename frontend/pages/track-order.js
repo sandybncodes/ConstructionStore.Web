@@ -270,7 +270,7 @@ export default function TrackOrderPage() {
   return (
     <>
       <Head>
-        <title>{t('trackOrderTitle')} — Zidex</title>
+        <title>{t('trackOrderTitle')} — MirDav Company</title>
       </Head>
       <Header />
 
