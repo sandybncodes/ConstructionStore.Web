@@ -34,10 +34,12 @@ export const translations = {
     footerSupport247: 'Suport online 24/7',
     footerFreeShipping: 'Livrare gratuită',
     footerTradeAssurance: 'Garanție comercială',
-    footerSecurePayments: 'Plăți securizate',
-    footerAbout: 'Despre magazinul nostru',
+    footerSecurePayments: 'Achitarea la primirea comenzii',
+    footerAbout: 'Program de lucru',
+    footerContact: 'Contact',
     footerSchedule: 'Lun–Vin: 9:00 – 18:00',
-    footerCopyright: '{year} Construction Store — Toate drepturile rezervate',
+    footerScheduleWeekend: 'Sâm–Dum: 9:00 - 15:00',
+    footerCopyright: '{year} MirDav Company — Toate drepturile rezervate',
 
     // Home page
     heroEyebrow: 'Materiale de calitate, livrate rapid oriunde în Moldova',
@@ -260,10 +262,12 @@ export const translations = {
     footerSupport247: 'Поддержка 24/7',
     footerFreeShipping: 'Бесплатная доставка',
     footerTradeAssurance: 'Торговая гарантия',
-    footerSecurePayments: 'Безопасные платежи',
-    footerAbout: 'О нашем магазине',
+    footerSecurePayments: 'Оплата при получении заказа',
+    footerAbout: 'Программа работы',
+    footerContact: 'Контакты',
     footerSchedule: 'Пн–Пт: 9:00 – 18:00',
-    footerCopyright: '{year} Construction Store — Все права защищены',
+    footerScheduleWeekend: 'Сб–Вс: 9:00 - 15:00',
+    footerCopyright: '{year} MirDav Company — Все права защищены',
 
     // Home page
     heroEyebrow: 'Качественные материалы, быстрая доставка по всей Молдове',
@@ -519,10 +523,12 @@ export const translations = {
     footerSupport247: 'Online 24/7 Support',
     footerFreeShipping: 'Free Shipping',
     footerTradeAssurance: 'Trade Assurance',
-    footerSecurePayments: 'Secure Payments',
-    footerAbout: 'About Our Store',
+    footerSecurePayments: 'Payment upon receipt of the order',
+    footerAbout: 'Work Schedule',
+    footerContact: 'Contact',
     footerSchedule: 'Mon–Fri: 9am – 6pm',
-    footerCopyright: '{year} Construction Store — All rights reserved',
+    footerScheduleWeekend: 'Sat–Sun: 9am - 3pm',
+    footerCopyright: '{year} MirDav Company — All rights reserved',
 
     // Home page
     heroEyebrow: 'Quality materials, delivered fast anywhere in Moldova',

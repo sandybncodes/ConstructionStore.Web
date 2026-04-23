@@ -425,13 +425,6 @@ export default function ProductDetails() {
                     <div>
                       <h3 className="pd-tab-heading">{t('aboutThisItem')}</h3>
                       <p>{product.description || t('noDescriptionAvailable')}</p>
-                      {featurePoints.length > 0 && (
-                        <ul className="pd-feature-list">
-                          {featurePoints.map((point, index) => (
-                            <li key={index}>{point}.</li>
-                          ))}
-                        </ul>
-                      )}
                       <div className="pd-tech-table-wrap">
                         <table className="pd-tech-table">
                           <thead>

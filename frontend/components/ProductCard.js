@@ -3,17 +3,6 @@ import { useState } from 'react'
 import { useLanguage } from '../lib/i18nContext'
 import { getFallbackProductImage, getProductImageSet } from '../lib/productImages'
 
-function Stars({ rating = 4 }) {
-  const { t } = useLanguage()
-  return (
-    <div className="star-rating" aria-label={t('ratingAria', { rating })}>
-      {[1, 2, 3, 4, 5].map(i => (
-        <span key={i} style={{ color: i <= Math.round(rating) ? '#f0b429' : '#d1d5db' }}>&#9733;</span>
-      ))}
-    </div>
-  )
-}
-
 export default function ProductCard({ product, rating = 4, listMode = false, onAddToCart }) {
   const { t, translateProductName } = useLanguage()
   const [added, setAdded] = useState(false)
@@ -76,7 +65,6 @@ export default function ProductCard({ product, rating = 4, listMode = false, onA
         </div>
         <div className="product-card-body">
           <div className="product-card-name">{productName}</div>
-          <Stars rating={rating} />
           {listMode && product.description && (
             <p className="product-card-desc">{product.description}</p>
           )}
