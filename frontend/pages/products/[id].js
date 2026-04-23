@@ -425,7 +425,7 @@ export default function ProductDetails() {
                             <tr><td>{t('category')}</td><td>{categoryName}</td></tr>
                             <tr><td>{t('stock')}</td><td>{product.stockQuantity} {t('units')}</td></tr>
                             <tr><td>{t('price')}</td><td>{discountedPrice != null ? discountedPrice.toFixed(2) : '—'} MDL</td></tr>
-                            <tr><td>{t('status')}</td><td>{product.isActive ? t('available') : t('unavailable')}</td></tr>
+                            <tr><td>{t('status')}</td><td>{product.isActive && product.stockQuantity > 0 ? t('available') : t('unavailable')}</td></tr>
                           </tbody>
                         </table>
                       </div>
