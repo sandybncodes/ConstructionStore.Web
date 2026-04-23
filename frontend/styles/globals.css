@@ -1944,6 +1944,8 @@ header {
   margin: 0;
   color: var(--text-gray);
   line-height: 1.7;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .pd-price-block {
