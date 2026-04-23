@@ -280,7 +280,6 @@ export default function ProductDetails() {
 
                 <section className="pd-info-card">
                   <div className="pd-info-head">
-                    {product.category && <span className="pd-category-chip">{categoryName}</span>}
                     <h1 className="pd-name">{productName}</h1>
                     <p className="pd-lead">{shortDescription || t('noDescriptionAvailable')}</p>
                   </div>
@@ -298,8 +297,6 @@ export default function ProductDetails() {
                     </div>
                   </div>
 
-                  <Stars rating={4.5} />
-
                   <div className="pd-fact-grid">
                     <div className="pd-fact-card">
                       <span>{t('category')}</span>
@@ -314,14 +311,6 @@ export default function ProductDetails() {
                       <strong>{product.isActive && product.stockQuantity > 0 ? t('available') : t('unavailable')}</strong>
                     </div>
                   </div>
-
-                  {featurePoints.length > 0 && (
-                    <ul className="pd-feature-list pd-feature-list--summary">
-                      {featurePoints.map((point, index) => (
-                        <li key={index}>{point}.</li>
-                      ))}
-                    </ul>
-                  )}
 
                   <div className="pd-purchase-card">
                     <div className="pd-stock">

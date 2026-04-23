@@ -2011,6 +2011,17 @@ header {
   padding: 18px 18px 18px 34px;
 }
 
+.pd-description-label {
+  margin: 0;
+  padding: 14px 18px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  background: var(--surface-soft);
+  border-radius: 12px;
+  border-left: 3px solid var(--accent, #d89c22);
+}
+
 .pd-purchase-card {
   display: flex;
   flex-direction: column;
