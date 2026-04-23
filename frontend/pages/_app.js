@@ -11,6 +11,7 @@ function AppContent({ Component, pageProps }) {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{t('siteTitle')}</title>
+        <link rel="icon" type="image/svg+xml" href="/resources/logo-mirdav.svg" />
       </Head>
       <Component {...pageProps} />
     </>
