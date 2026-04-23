@@ -108,7 +108,9 @@ export default function Header() {
       {/* ── Main Navigation ── */}
       <nav className="site-nav navbar navbar-expand-lg" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}>
         <div className="container-main d-flex align-items-center w-100">
-          <Link href="/" className="navbar-brand me-3" style={{lineHeight: 1.1, display: 'flex', flexDirection: 'column'}}><span style={{fontWeight: 700}}>MIRDAV</span><span style={{fontWeight: 400, fontSize: '0.55em', letterSpacing: '2px'}}>COMPANY</span></Link>
+          <Link href="/" className="navbar-brand me-3">
+            <img src="/resources/logo-mirdav.svg" alt="Mirdav" className="nav-logo" />
+          </Link>
 
           {/* Hamburger — mobile only */}
           <button
@@ -267,7 +269,9 @@ export default function Header() {
       <div className={`mob-drawer${navOpen ? ' mob-drawer--open' : ''}`} aria-hidden={!navOpen}>
         {/* Drawer header */}
         <div className="mob-drawer-header">
-          <Link href="/" className="mob-drawer-brand" onClick={closeDrawer} style={{lineHeight: 1.1, display: 'flex', flexDirection: 'column'}}><span style={{fontWeight: 700}}>MIRDAV</span><span style={{fontWeight: 400, fontSize: '0.55em', letterSpacing: '2px'}}>COMPANY</span></Link>
+          <Link href="/" className="mob-drawer-brand" onClick={closeDrawer}>
+            <img src="/resources/logo-mirdav.svg" alt="Mirdav" className="nav-logo" />
+          </Link>
           <button className="mob-drawer-close" onClick={closeDrawer} aria-label="Close menu">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
@@ -711,10 +715,9 @@ export default function Header() {
           flex-shrink: 0;
         }
         .mob-drawer-brand {
-          font-size: 22px;
-          font-weight: 900;
-          letter-spacing: -0.5px;
-          color: var(--text-dark) !important;
+          display: inline-flex;
+          align-items: center;
+          line-height: 0;
           text-decoration: none !important;
         }
         .mob-drawer-close {

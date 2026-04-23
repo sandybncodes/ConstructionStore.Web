@@ -8,12 +8,14 @@ export default function Footer() {
       {/* ── Main Footer ── */}
       <div className="site-footer">
         <div className="container-main py-5">
-          <div className="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-4">
+          <div className="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4">
 
-            <div className="col">
-              <h5 style={{lineHeight: 1.1}}><span style={{fontWeight: 700, display: 'block'}}>MIRDAV</span><span style={{fontWeight: 400, fontSize: '0.7em'}}>COMPANY</span></h5>
+            {/*<div className="col">
+              <Link href="/" className="footer-logo-wrap">
+                <img src="/resources/logo-mirdav.svg" alt="Mirdav" className="footer-logo" />
+              </Link>
               <p>{t('footerTagline')}</p>
-            </div>
+            </div>*/}
 
             <div className="col">
               <h6>{t('footerProducts')}</h6>
