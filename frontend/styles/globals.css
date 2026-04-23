@@ -2045,6 +2045,11 @@ header {
   box-shadow: 0 0 0 6px rgba(22, 163, 74, 0.12);
 }
 
+.pd-stock-dot--unavailable {
+  background: #dc2626;
+  box-shadow: 0 0 0 6px rgba(220, 38, 38, 0.12);
+}
+
 .pd-cart-row {
   flex-wrap: wrap;
 }

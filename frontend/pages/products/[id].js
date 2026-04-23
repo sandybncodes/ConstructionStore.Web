@@ -314,7 +314,7 @@ export default function ProductDetails() {
 
                   <div className="pd-purchase-card">
                     <div className="pd-stock">
-                      <span className="pd-stock-dot" />
+                      <span className={`pd-stock-dot${product.stockQuantity <= 0 ? ' pd-stock-dot--unavailable' : ''}`} />
                       <span>
                         {product.stockQuantity > 0
                           ? `${product.stockQuantity} ${t('inStock')}`
