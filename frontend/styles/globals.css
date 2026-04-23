@@ -1568,6 +1568,21 @@ header {
 
 .add-to-cart-btn.added:hover { background: #15803d; }
 
+/* ── Mobile nav cart button ── */
+.nav-cart-mobile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  color: var(--text-dark);
+  text-decoration: none !important;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin-right: 8px;
+}
+.nav-cart-mobile:hover { border-color: var(--yellow); color: var(--yellow); }
+
 /* ── Cart badge on header ── */
 .cart-icon-btn {
   position: relative;
