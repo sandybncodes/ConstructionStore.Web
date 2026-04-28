@@ -35,9 +35,13 @@ export default function ProductCard({ product, rating = 4, listMode = false, onA
     if (!isNaN(v) && v >= 1) setQty(v)
   }
 
+  const productHref = product._variantId
+    ? `/products/${product.id}?variant=${product._variantId}`
+    : `/products/${product.id}`
+
   return (
     <div className={`product-card${listMode ? ' product-card--list' : ''}`}>
-      <Link href={`/products/${product.id}`}>
+      <Link href={productHref}>
         <div className="product-card-img">
           <div className="product-card-img-glow" aria-hidden="true" />
           {hasDiscount && (

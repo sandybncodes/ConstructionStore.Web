@@ -119,6 +119,11 @@ export const translations = {
     decreaseQty: 'Scade cantitatea',
     increaseQty: 'Crește cantitatea',
 
+    // Variants grid
+    otherVariants: 'Alte variante disponibile',
+    selectVariant: 'Selectează',
+    currentVariant: 'Curent',
+
     // Cart page
     shoppingCart: 'Coș de cumpărături',
     orderPlaced: 'Comandă plasată!',
@@ -345,6 +350,11 @@ export const translations = {
     noDescriptionAvailable: 'Описание недоступно.',
     decreaseQty: 'Уменьшить количество',
     increaseQty: 'Увеличить количество',
+
+    // Variants grid
+    otherVariants: 'Другие доступные варианты',
+    selectVariant: 'Выбрать',
+    currentVariant: 'Текущий',
 
     // Cart page
     shoppingCart: 'Корзина покупок',
@@ -606,6 +616,11 @@ export const translations = {
     noDescriptionAvailable: 'No description available.',
     decreaseQty: 'Decrease quantity',
     increaseQty: 'Increase quantity',
+
+    // Variants grid
+    otherVariants: 'Other Available Variants',
+    selectVariant: 'Select',
+    currentVariant: 'Current',
 
     // Cart page
     shoppingCart: 'Shopping Cart',

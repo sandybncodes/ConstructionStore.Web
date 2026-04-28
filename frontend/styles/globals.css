@@ -1755,7 +1755,8 @@ header {
 
 .pd-gallery-card,
 .pd-info-card,
-.pd-tabs-section {
+.pd-tabs-section,
+.pd-variants-section {
   border-radius: 30px;
   background: rgba(255, 255, 255, 0.88);
   border: 1px solid rgba(255, 255, 255, 0.86);
@@ -2244,6 +2245,75 @@ header {
   letter-spacing: 0.08em;
 }
 
+/* ── Variants grid ── */
+.pd-variants-section {
+  margin: 28px 0 0;
+  padding: 26px;
+}
+
+.pd-variants-heading {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue-dark);
+  margin: 0 0 16px;
+}
+
+.pd-variants-table-wrap {
+  overflow-x: auto;
+}
+
+.pd-variants-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 360px;
+  font-size: 14px;
+}
+
+.pd-variants-table th,
+.pd-variants-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(21, 37, 58, 0.08);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.pd-variants-table thead th {
+  background: rgba(23, 50, 77, 0.06);
+  color: var(--blue-dark);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pd-variant-row--active {
+  background: rgba(23, 50, 77, 0.04);
+  font-weight: 600;
+}
+
+.pd-variant-current-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: var(--blue-dark);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.pd-variant-select-link {
+  color: var(--blue-dark);
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.pd-variant-select-link:hover {
+  opacity: 0.75;
+}
+
 @media (max-width: 1080px) {
   .pd-main {
     grid-template-columns: 1fr;
@@ -2284,7 +2354,8 @@ header {
 
   .pd-gallery-card,
   .pd-info-card,
-  .pd-tabs-section {
+  .pd-tabs-section,
+  .pd-variants-section {
     border-radius: 24px;
     padding: 18px;
   }

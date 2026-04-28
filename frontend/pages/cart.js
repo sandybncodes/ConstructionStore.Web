@@ -7,6 +7,7 @@ import { createOrder } from '../lib/api'
 import { useLanguage } from '../lib/i18nContext'
 import { getPrimaryProductImage } from '../lib/productImages'
 import { downloadOrderPdf } from '../lib/orderPdf'
+import { buildVariantSuffix } from '../lib/variantUtils'
 
 function QuantityControl({ quantity, onDecrement, onIncrement, t }) {
   return (
@@ -62,7 +63,9 @@ export default function CartPage() {
       notes: form.notes.trim() || null,
       items: cart.map(({ product, quantity }) => ({
         productId: product.id,
+        variantId: product._variantId ?? null,
         quantity,
+        price: product.price,
       })),
     }
 
@@ -82,9 +85,12 @@ export default function CartPage() {
         notes: form.notes.trim() || null,
         items: cart.map(({ product, quantity, discount }) => {
           const effectivePrice = product.price * (1 - (discount || 0) / 100)
+          // product.name already contains the variant suffix (set in ProductDetailView.handleAddToCart)
           return {
             productId: product.id,
+            variantId: product._variantId ?? null,
             productName: product.name,
+            variantAttributes: product._variantAttributes || [],
             productImageUrl: getPrimaryProductImage(product),
             quantity,
             price: effectivePrice,
@@ -139,7 +145,6 @@ export default function CartPage() {
             </svg>
             <h2 className="checkout-success-title">{t('orderPlaced')}</h2>
             <p>{t('thankYouOrder', { id: orderSuccess.id })}</p>
-            <p className="checkout-success-token">{t('referenceToken')} <code>{orderSuccess.orderToken}</code></p>
             <p className="checkout-success-total">{t('orderTotal')} <strong>{Number(orderSuccess.totalPrice).toFixed(2)} MDL</strong></p>
             <div className="checkout-success-actions">
               <Link href="/products" className="btn-yellow" style={{ display: 'inline-block' }}>
@@ -197,6 +202,10 @@ export default function CartPage() {
                     {cart.map(({ product, quantity, discount }) => {
                       const effectivePrice = product.price * (1 - (discount || 0) / 100)
                       const lineTotal = effectivePrice * quantity
+                      const displayName = translateProductName(product.name)
+                      const productLink = product._variantId
+                        ? `/products/product${product.id}/variant${product._variantId}`
+                        : `/products/${product.id}`
                       return (
                         <li key={product.id} className="cart-item">
                           <div className="cart-col-product cart-item-product">
@@ -207,8 +216,8 @@ export default function CartPage() {
                               />
                             </div>
                             <div className="cart-item-info">
-                              <Link href={`/products/${product.id}`} className="cart-item-name">
-                                {product.name}
+                              <Link href={productLink} className="cart-item-name">
+                                {displayName}
                               </Link>
                               {discount > 0 && (
                                 <span className="cart-item-discount">-{discount}% off</span>
@@ -232,8 +241,8 @@ export default function CartPage() {
                             <span className="cart-mobile-label">{t('quantityCol')}</span>
                             <QuantityControl
                               quantity={quantity}
-                              onDecrement={() => updateQuantity(product.id, quantity - 1)}
-                              onIncrement={() => updateQuantity(product.id, quantity + 1)}
+                              onDecrement={() => updateQuantity(product.id, product._variantId, quantity - 1)}
+                              onIncrement={() => updateQuantity(product.id, product._variantId, quantity + 1)}
                               t={t}
                             />
                           </div>
@@ -246,8 +255,8 @@ export default function CartPage() {
                           <div className="cart-col-remove">
                             <button
                               className="cart-remove-btn"
-                              onClick={() => removeFromCart(product.id)}
-                              aria-label={t('removeItem', { name: product.name })}
+                              onClick={() => removeFromCart(product.id, product._variantId)}
+                              aria-label={t('removeItem', { name: displayName })}
                             >
                               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>

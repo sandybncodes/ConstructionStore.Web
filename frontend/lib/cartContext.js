@@ -2,6 +2,11 @@ import { createContext, useContext, useEffect, useState } from 'react'
 
 const CartContext = createContext(null)
 
+/** Unique key per cart line — combines product id and variant id */
+function cartKey(product) {
+  return `${product.id}_${product._variantId ?? ''}`
+}
+
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([])
   const [hydrated, setHydrated] = useState(false)
@@ -22,11 +27,12 @@ export function CartProvider({ children }) {
   }, [cart, hydrated])
 
   function addToCart(product, discount, qty = 1) {
+    const key = cartKey(product)
     setCart(prev => {
-      const existing = prev.find(item => item.product.id === product.id)
+      const existing = prev.find(item => cartKey(item.product) === key)
       if (existing) {
         return prev.map(item =>
-          item.product.id === product.id
+          cartKey(item.product) === key
             ? { ...item, quantity: item.quantity + qty }
             : item
         )
@@ -35,15 +41,17 @@ export function CartProvider({ children }) {
     })
   }
 
-  function removeFromCart(productId) {
-    setCart(prev => prev.filter(item => item.product.id !== productId))
+  function removeFromCart(productId, variantId) {
+    const key = `${productId}_${variantId ?? ''}`
+    setCart(prev => prev.filter(item => cartKey(item.product) !== key))
   }
 
-  function updateQuantity(productId, qty) {
-    if (qty < 1) { removeFromCart(productId); return }
+  function updateQuantity(productId, variantId, qty) {
+    if (qty < 1) { removeFromCart(productId, variantId); return }
+    const key = `${productId}_${variantId ?? ''}`
     setCart(prev =>
       prev.map(item =>
-        item.product.id === productId ? { ...item, quantity: qty } : item
+        cartKey(item.product) === key ? { ...item, quantity: qty } : item
       )
     )
   }

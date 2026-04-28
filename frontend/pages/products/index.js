@@ -7,6 +7,7 @@ import ProductCard from '../../components/ProductCard'
 import { getProducts, getCategories } from '../../lib/api'
 import { useCart } from '../../lib/cartContext'
 import { useLanguage } from '../../lib/i18nContext'
+import { expandProducts } from '../../lib/variantUtils'
 
 const PAGE_SIZE = 12
 
@@ -48,7 +49,7 @@ export default function Products() {
     Promise.all([getProducts(), getCategories()])
       .then(([prods, cats]) => {
         if (!mounted) return
-        setAllProducts(prods || [])
+        setAllProducts(expandProducts(prods || []))
         setCategories(cats || [])
         setLoading(false)
       })
@@ -152,7 +153,7 @@ export default function Products() {
                       onClick={() => { setSelectedCat(selectedCat === cat.id ? null : cat.id); setVisibleCount(PAGE_SIZE) }}
                     >
                       {translateCategoryName(cat.name)}
-                      <span className="shop-cat-count">({cat.products?.length ?? 0})</span>
+                      <span className="shop-cat-count">({allProducts.filter(p => p.categoryId === cat.id).length})</span>
                     </button>
                   </li>
                 ))}
@@ -284,7 +285,7 @@ export default function Products() {
               <div className={viewMode === 'grid' ? 'shop-product-grid' : 'shop-product-list'}>
                 {visibleProducts.map((p, i) => (
                   <ProductCard
-                    key={p.id}
+                    key={p._variantId ? `${p.id}-${p._variantId}` : p.id}
                     product={p}
                     rating={RATING_MAP[i % RATING_MAP.length]}
                     listMode={viewMode === 'list'}

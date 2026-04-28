@@ -197,12 +197,26 @@ export async function downloadOrderPdf(order, t, translateProductName) {
         t('trackOrderItemPrice') || 'Preț/buc',
         t('trackOrderItemTotal') || 'Total',
       ]],
-      body: order.items.map(item => [
-        item.productName ? translateProductName(item.productName) : `#${item.productId}`,
-        item.quantity,
-        `${Number(item.price).toFixed(2)} MDL`,
-        `${Number(item.lineTotal).toFixed(2)} MDL`,
-      ]),
+      body: order.items.map(item => {
+        const name = item.productName ? translateProductName(item.productName) : `#${item.productId}`
+        // Append variant attributes as a compact sub-line if available
+        const attrs = (item.variantAttributes || [])
+        const attrStr = attrs.length > 0
+          ? attrs.map(a => {
+              const val = a.valueNumeric != null
+                ? `${parseFloat(a.valueNumeric)}${a.unit ? ' ' + a.unit : ''}`
+                : (a.valueText || '')
+              return `${a.attributeName}: ${val}`
+            }).join(', ')
+          : ''
+        const displayName = attrStr ? `${name}\n${attrStr}` : name
+        return [
+          displayName,
+          item.quantity,
+          `${Number(item.price).toFixed(2)} MDL`,
+          `${Number(item.lineTotal).toFixed(2)} MDL`,
+        ]
+      }),
       margin: { left: MARGIN, right: MARGIN },
       styles: {
         font: FONT,

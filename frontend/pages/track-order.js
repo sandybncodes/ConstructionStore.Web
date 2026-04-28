@@ -228,7 +228,22 @@ export default function TrackOrderPage() {
                             className="track-item-img"
                             onError={e => { e.currentTarget.src = FALLBACK_PRODUCT_IMAGE }}
                           />
-                          <span>{item.productName ? translateProductName(item.productName) : `#${item.productId}`}</span>
+                          <div>
+                            <span>{item.productName ? translateProductName(item.productName) : `#${item.productId}`}</span>
+                            {item.variantAttributes && item.variantAttributes.length > 0 && (
+                              <span className="track-item-variant-attrs">
+                                {item.variantAttributes
+                                  .filter(a => a.attributeName)
+                                  .map(a => {
+                                    const val = a.valueNumeric != null
+                                      ? `${parseFloat(a.valueNumeric)}${a.unit ? ' ' + a.unit : ''}`
+                                      : (a.valueText || '')
+                                    return `${a.attributeName}: ${val}`
+                                  })
+                                  .join(', ')}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </td>
                       <td className="col-num">{item.quantity}</td>
@@ -817,7 +832,7 @@ export default function TrackOrderPage() {
         .track-items-table tbody tr:hover td { background: #f9fafb; }
         .track-item-product {
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           gap: 10px;
         }
         .track-item-img {
@@ -828,6 +843,12 @@ export default function TrackOrderPage() {
           border: 1px solid #e5e7eb;
           flex-shrink: 0;
           background: #f9fafb;
+        }
+        .track-item-variant-attrs {
+          display: block;
+          font-size: 11px;
+          color: #6b7280;
+          margin-top: 2px;
         }
 
         /* ── Multiple orders list ── */

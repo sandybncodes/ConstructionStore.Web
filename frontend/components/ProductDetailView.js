@@ -1,16 +1,16 @@
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import Header from '../../components/Header'
-import Footer from '../../components/Footer'
-import { getProductById } from '../../lib/api'
-import { useCart } from '../../lib/cartContext'
-import { useLanguage } from '../../lib/i18nContext'
-import { getFallbackProductImage, getProductImageSet } from '../../lib/productImages'
+import Header from './Header'
+import Footer from './Footer'
+import { getProductById } from '../lib/api'
+import { useCart } from '../lib/cartContext'
+import { useLanguage } from '../lib/i18nContext'
+import { getFallbackProductImage, getProductImageSet } from '../lib/productImages'
+import { resolveActiveVariant, getSameAttrVariants, getVariantGridColumns, formatAttrValue, buildVariantSuffix } from '../lib/variantUtils'
 
 function Stars({ rating = 4 }) {
   const { t } = useLanguage()
-
   return (
     <div className="pd-stars">
       {[1, 2, 3, 4, 5].map(index => (
@@ -23,9 +23,17 @@ function Stars({ rating = 4 }) {
   )
 }
 
-export default function ProductDetails() {
+/**
+ * Shared product detail view, used by both:
+ *   pages/products/[id].js          → /products/123
+ *   pages/products/[productSegment]/[variantSegment].js  → /products/product123/variant456
+ *
+ * Props:
+ *   productId  – number
+ *   variantId  – number | null
+ */
+export default function ProductDetailView({ productId, variantId }) {
   const router = useRouter()
-  const { id } = router.query
   const { t, translateCategoryName, translateProductName } = useLanguage()
   const { addToCart } = useCart()
   const thumbRailRef = useRef(null)
@@ -41,13 +49,13 @@ export default function ProductDetails() {
   const [lightboxOpen, setLightboxOpen] = useState(false)
 
   useEffect(() => {
-    if (!id) return
+    if (!productId) return
 
     let mounted = true
     setLoading(true)
     setError(null)
 
-    getProductById(id)
+    getProductById(productId)
       .then(data => {
         if (!mounted) return
         setProduct(data)
@@ -62,26 +70,27 @@ export default function ProductDetails() {
     return () => {
       mounted = false
     }
-  }, [id])
+  }, [productId])
 
   useEffect(() => {
     setActiveImg(0)
     setQty(1)
     setActiveTab('description')
     setAdded(false)
-  }, [product?.id])
+  }, [product?.id, variantId])
+
+  const activeVariant = resolveActiveVariant(product, variantId)
 
   const images = getProductImageSet(product)
-  const productName = product ? translateProductName(product.name) : ''
+  const variantSuffix = activeVariant ? buildVariantSuffix(activeVariant) : ''
+  const baseProductName = product ? translateProductName(product.name) : ''
+  const productName = variantSuffix ? `${baseProductName} ${variantSuffix}` : baseProductName
   const categoryName = product?.category?.name
     ? translateCategoryName(product.category.name)
     : '—'
-  const hasDiscount = product?.discount > 0
   const currentImage = images[activeImg] ?? images[0]
-  const maxQuantity = Math.max(1, product?.stockQuantity || 1)
-  const discountedPrice = product?.price != null && hasDiscount
-    ? product.price * (1 - product.discount / 100)
-    : product?.price ?? null
+  const maxQuantity = Math.max(1, activeVariant?.stockQuantity || 1)
+  const activePrice = activeVariant?.price ?? null
   const shortDescription = product?.description
     ?.split('.')
     .map(sentence => sentence.trim())
@@ -94,11 +103,15 @@ export default function ProductDetails() {
         .slice(0, 4)
     : []
 
-  useEffect(() => {
-    if (!thumbRailRef.current) {
-      return
-    }
+  // Variant grid data — shown when product has 2 or more variants
+  const sameAttrVariants = product && (product.variants || []).length > 1
+    ? getSameAttrVariants(product.variants, activeVariant)
+    : []
+  const variantGridCols = getVariantGridColumns(sameAttrVariants)
+  const showVariantsGrid = sameAttrVariants.length > 1
 
+  useEffect(() => {
+    if (!thumbRailRef.current) return
     const activeThumb = thumbRailRef.current.querySelector(`[data-thumb-index="${activeImg}"]`)
     activeThumb?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
   }, [activeImg])
@@ -109,11 +122,23 @@ export default function ProductDetails() {
   }
 
   function handleAddToCart() {
-    if (!product || product.stockQuantity <= 0) {
-      return
-    }
+    if (!product || !activeVariant || activeVariant.stockQuantity <= 0) return
 
-    addToCart(product, product.discount, qty)
+    // Store the full variant name (with suffix) so the cart and order show correct info
+    const fullVariantName = variantSuffix ? `${product.name} ${variantSuffix}` : product.name
+
+    addToCart(
+      {
+        ...product,
+        name: fullVariantName,
+        price: activeVariant.price,
+        stockQuantity: activeVariant.stockQuantity,
+        _variantId: activeVariant.id,
+        _variantAttributes: activeVariant.attributes || [],
+      },
+      0,
+      qty
+    )
     setAdded(true)
     setTimeout(() => setAdded(false), 1600)
   }
@@ -234,12 +259,6 @@ export default function ProductDetails() {
                   </div>
 
                   <div className="pd-stage">
-                    {hasDiscount && (
-                      <div className="pd-stage-top">
-                        <span className="pd-stage-sale">-{product.discount}%</span>
-                      </div>
-                    )}
-
                     <div
                       className="pd-stage-frame"
                       onTouchStart={handleTouchStart}
@@ -285,14 +304,8 @@ export default function ProductDetails() {
                   </div>
 
                   <div className="pd-price-block">
-                    {hasDiscount && (
-                      <div className="pd-price-original-row">
-                        <span className="pd-price-original">{product.price != null ? product.price.toFixed(2) : '—'} MDL</span>
-                        <span className="pd-discount-badge">-{product.discount}%</span>
-                      </div>
-                    )}
                     <div className="pd-price-row">
-                      <span className="pd-price-amount">{discountedPrice != null ? discountedPrice.toFixed(2) : '—'}</span>
+                      <span className="pd-price-amount">{activePrice != null ? activePrice.toFixed(2) : '—'}</span>
                       <span className="pd-price-currency">MDL</span>
                     </div>
                   </div>
@@ -304,20 +317,20 @@ export default function ProductDetails() {
                     </div>
                     <div className="pd-fact-card">
                       <span>{t('stock')}</span>
-                      <strong>{product.stockQuantity} {t('units')}</strong>
+                      <strong>{activeVariant?.stockQuantity ?? 0} {t('units')}</strong>
                     </div>
                     <div className="pd-fact-card">
                       <span>{t('status')}</span>
-                      <strong>{product.isActive && product.stockQuantity > 0 ? t('available') : t('unavailable')}</strong>
+                      <strong>{product.isActive && (activeVariant?.stockQuantity ?? 0) > 0 ? t('available') : t('unavailable')}</strong>
                     </div>
                   </div>
 
                   <div className="pd-purchase-card">
                     <div className="pd-stock">
-                      <span className={`pd-stock-dot${product.stockQuantity <= 0 ? ' pd-stock-dot--unavailable' : ''}`} />
+                      <span className={`pd-stock-dot${(activeVariant?.stockQuantity ?? 0) <= 0 ? ' pd-stock-dot--unavailable' : ''}`} />
                       <span>
-                        {product.stockQuantity > 0
-                          ? `${product.stockQuantity} ${t('inStock')}`
+                        {(activeVariant?.stockQuantity ?? 0) > 0
+                          ? `${activeVariant.stockQuantity} ${t('inStock')}`
                           : t('unavailable')}
                       </span>
                     </div>
@@ -335,9 +348,7 @@ export default function ProductDetails() {
                           value={qty}
                           onChange={event => {
                             const nextValue = parseInt(event.target.value, 10)
-                            if (!Number.isNaN(nextValue)) {
-                              setSafeQuantity(nextValue)
-                            }
+                            if (!Number.isNaN(nextValue)) setSafeQuantity(nextValue)
                           }}
                           aria-label={t('quantityLabel')}
                         />
@@ -350,7 +361,7 @@ export default function ProductDetails() {
                         type="button"
                         className={`pd-btn-cart${added ? ' added' : ''}`}
                         onClick={handleAddToCart}
-                        disabled={added || product.stockQuantity <= 0}
+                        disabled={added || (activeVariant?.stockQuantity ?? 0) <= 0}
                       >
                         {added ? (
                           <>
@@ -393,6 +404,50 @@ export default function ProductDetails() {
                 </section>
               </div>
 
+              {/* ── Variants grid ── */}
+              {showVariantsGrid && (
+                <div className="pd-variants-section">
+                  <h3 className="pd-variants-heading">{t('otherVariants')}</h3>
+                  <div className="pd-variants-table-wrap">
+                    <table className="pd-variants-table">
+                      <thead>
+                        <tr>
+                          {variantGridCols.map(col => (
+                            <th key={col}>{col}</th>
+                          ))}
+                          <th>{t('price')}</th>
+                          <th>{t('stock')}</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sameAttrVariants.map(v => {
+                          const isCurrent = v.id === activeVariant?.id
+                          return (
+                            <tr key={v.id} className={isCurrent ? 'pd-variant-row--active' : ''}>
+                              {variantGridCols.map(col => {
+                                const attr = (v.attributes || []).find(
+                                  a => a.attributeName.toLowerCase() === col.toLowerCase()
+                                )
+                                return <td key={col}>{formatAttrValue(attr)}</td>
+                              })}
+                              <td>{v.price.toFixed(2)} MDL</td>
+                              <td>{v.stockQuantity} {t('units')}</td>
+                              <td>
+                                {isCurrent
+                                  ? <span className="pd-variant-current-badge">{t('currentVariant')}</span>
+                                  : <Link href={`/products/product${product.id}/variant${v.id}`} className="pd-variant-select-link">{t('selectVariant')}</Link>
+                                }
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
               <div className="pd-tabs-section">
                 <div className="pd-tab-bar" role="tablist">
                   {tabs.map(tab => (
@@ -423,9 +478,15 @@ export default function ProductDetails() {
                           </thead>
                           <tbody>
                             <tr><td>{t('category')}</td><td>{categoryName}</td></tr>
-                            <tr><td>{t('stock')}</td><td>{product.stockQuantity} {t('units')}</td></tr>
-                            <tr><td>{t('price')}</td><td>{discountedPrice != null ? discountedPrice.toFixed(2) : '—'} MDL</td></tr>
-                            <tr><td>{t('status')}</td><td>{product.isActive && product.stockQuantity > 0 ? t('available') : t('unavailable')}</td></tr>
+                            <tr><td>{t('stock')}</td><td>{activeVariant?.stockQuantity ?? 0} {t('units')}</td></tr>
+                            <tr><td>{t('price')}</td><td>{activePrice != null ? activePrice.toFixed(2) : '—'} MDL</td></tr>
+                            <tr><td>{t('status')}</td><td>{product.isActive && (activeVariant?.stockQuantity ?? 0) > 0 ? t('available') : t('unavailable')}</td></tr>
+                            {(activeVariant?.attributes || []).map(attr => (
+                              <tr key={attr.attributeName}>
+                                <td>{attr.attributeName}</td>
+                                <td>{formatAttrValue(attr)}</td>
+                              </tr>
+                            ))}
                           </tbody>
                         </table>
                       </div>
