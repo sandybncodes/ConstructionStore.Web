@@ -402,6 +402,79 @@ header {
   font-size: 14px;
 }
 
+/* ── Statistics Strip ── */
+.stats-section {
+  background: var(--bg-light);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 64px 0 60px;
+  margin-top: 0;
+}
+
+.stats-eyebrow {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin: 0 0 44px;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 24px;
+  position: relative;
+}
+.stat-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 8%;
+  height: 84%;
+  width: 1px;
+  background: var(--border);
+}
+
+.stat-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--yellow);
+  margin-bottom: 16px;
+}
+.stat-item-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.stat-item-value {
+  display: block;
+  font-size: 54px;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1;
+  letter-spacing: -2px;
+  margin-bottom: 12px;
+}
+
+.stat-item-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-gray);
+  line-height: 1.5;
+}
+
 /* ── Fullscreen Lightbox ── */
 .pd-lightbox {
   position: fixed;
@@ -488,10 +561,17 @@ header {
   .hero-image-wrap { display: none; }
   .hero-title { font-size: 38px; }
   .home-cat-grid { grid-template-columns: repeat(2, 1fr); }
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 40px 0; }
+  .stat-item:not(:last-child)::after { display: none; }
+  .stat-item:nth-child(1),
+  .stat-item:nth-child(2) { border-bottom: 1px solid var(--border); padding-bottom: 40px; }
+  .stat-item:nth-child(3),
+  .stat-item:nth-child(4) { padding-top: 40px; }
 }
 @media (max-width: 600px) {
   .hero-title { font-size: 30px; }
   .home-cat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .stat-item-value { font-size: 42px; }
   .pd-lightbox-arrow--prev { left: 6px; }
   .pd-lightbox-arrow--next { right: 6px; }
 }
@@ -881,7 +961,7 @@ header {
 .site-footer {
   background: #111827;
   color: #9ca3af;
-  margin-top: 60px;
+  margin-top: 0;
 }
 
 .footer-logo-wrap {

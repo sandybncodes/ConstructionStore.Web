@@ -1,42 +1,23 @@
 import { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import ProductCard from '../components/ProductCard'
 import Link from 'next/link'
 import { getProducts, getCategories } from '../lib/api'
 import { useLanguage } from '../lib/i18nContext'
-import { useCart } from '../lib/cartContext'
-
-const RATING_CYCLE = [4, 4.5, 4, 4, 4.5]
-
-function CategoryIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
-      <line x1="7" y1="7" x2="7.01" y2="7"/>
-    </svg>
-  )
-}
 
 export default function Home() {
   const [products, setProducts] = useState([])
-  const [categories, setCategories] = useState([])
-  const [loadingProducts, setLoadingProducts] = useState(true)
-  const { t, translateCategoryName } = useLanguage()
-  const { addToCart } = useCart()
+  const [categories, setCategories] = useState([])  
+  const { t } = useLanguage()
 
   useEffect(() => {
     getProducts()
       .then(data => setProducts(data || []))
       .catch(() => {})
-      .finally(() => setLoadingProducts(false))
     getCategories()
       .then(data => setCategories(data || []))
       .catch(() => {})
   }, [])
-
-  const discountProducts = products.filter(p => p.discount > 0)
-  const displayedCategories = categories.slice(0, 8)
 
   return (
     <>
@@ -83,60 +64,60 @@ export default function Home() {
           </div>
         </section>
 
-        <div className="container-main">
+        {/* ══ Statistics Strip ══ */}
+        <section className="stats-section">
+          <div className="container-main">
+            <p className="stats-eyebrow">{t('statsSectionTitle')}</p>
+            <div className="stats-row">
 
-          {/* ══ Category Grid ══ */}
-          {displayedCategories.length > 0 && (
-            <section className="home-section">
-              <div className="home-section-head">
-                <h2 className="section-title">{t('navCategories')}</h2>
-                <Link href="/products" className="home-section-link">{t('heroBtn')} →</Link>
+              <div className="stat-item">
+                <span className="stat-item-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
+                    <rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
+                  </svg>
+                </span>
+                <strong className="stat-item-value">{categories.length || '—'}</strong>
+                <span className="stat-item-label">{t('statCategoriesLabel')}</span>
               </div>
-              <div className="home-cat-grid">
-                {displayedCategories.map((cat) => (
-                  <Link key={cat.id} href={`/products?category=${cat.id}`} className="home-cat-card">
-                    <div className="home-cat-icon">
-                      <CategoryIcon />
-                    </div>
-                    <span className="home-cat-name">{translateCategoryName(cat.name)}</span>
-                    {cat.products?.length > 0 && (
-                      <span className="home-cat-count">{cat.products.length} {t('navProductsWord')}</span>
-                    )}
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
 
-          {/* ══ Discount Products ══ */}
-          <section className="home-section">
-            <div className="home-section-head">
-              <h2 className="section-title">{t('discountProducts')}</h2>
-              <Link href="/products" className="home-section-link">{t('heroBtn')} →</Link>
+              <div className="stat-item">
+                <span className="stat-item-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                    <line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" />
+                  </svg>
+                </span>
+                <strong className="stat-item-value">{products.reduce((sum, p) => sum + (p.variants?.length || 1), 0) || '—'}</strong>
+                <span className="stat-item-label">{t('statProductsLabel')}</span>
+              </div>
+
+              <div className="stat-item">
+                <span className="stat-item-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                </span>
+                <strong className="stat-item-value">1000+</strong>
+                <span className="stat-item-label">{t('statClientsLabel')}</span>
+              </div>
+
+              <div className="stat-item">
+                <span className="stat-item-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                </span>
+                <strong className="stat-item-value">10+</strong>
+                <span className="stat-item-label">{t('statExperienceLabel')}</span>
+              </div>
+
             </div>
-
-            {loadingProducts ? (
-              <div className="home-loading">
-                <div className="home-loading-spinner" />
-                <span>{t('loadingProductsHome')}</span>
-              </div>
-            ) : discountProducts.length === 0 ? (
-              <p className="home-no-discount">{t('noDiscountProducts')}</p>
-            ) : (
-              <div className="popular-products-grid">
-                {discountProducts.map((p, i) => (
-                  <ProductCard
-                    key={p.id}
-                    product={p}
-                    rating={RATING_CYCLE[i % RATING_CYCLE.length]}
-                    onAddToCart={(qty) => addToCart(p, p.discount || 0, qty)}
-                  />
-                ))}
-              </div>
-            )}
-          </section>
-
-        </div>
+          </div>
+        </section>
       </main>
       <Footer />
     </>
