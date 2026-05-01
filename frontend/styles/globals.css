@@ -475,7 +475,17 @@ header {
   line-height: 1.5;
 }
 
-/* ── Fullscreen Lightbox ── */
+.stat-spinner {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--yellow);
+  border-radius: 50%;
+  animation: stat-spin 0.75s linear infinite;
+  vertical-align: middle;
+}
+@keyframes stat-spin { to { transform: rotate(360deg); } }
 .pd-lightbox {
   position: fixed;
   inset: 0;

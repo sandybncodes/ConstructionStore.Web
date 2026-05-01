@@ -8,15 +8,19 @@ import { useLanguage } from '../lib/i18nContext'
 export default function Home() {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])  
+  const [loadingProducts, setLoadingProducts] = useState(true)
+  const [loadingCategories, setLoadingCategories] = useState(true)
   const { t } = useLanguage()
 
   useEffect(() => {
     getProducts()
       .then(data => setProducts(data || []))
       .catch(() => {})
+      .finally(() => setLoadingProducts(false))
     getCategories()
       .then(data => setCategories(data || []))
       .catch(() => {})
+      .finally(() => setLoadingCategories(false))
   }, [])
 
   return (
@@ -77,7 +81,9 @@ export default function Home() {
                     <rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
                   </svg>
                 </span>
-                <strong className="stat-item-value">{categories.length || '—'}</strong>
+                <strong className="stat-item-value">
+                  {loadingCategories ? <span className="stat-spinner" aria-label="loading" /> : categories.length}
+                </strong>
                 <span className="stat-item-label">{t('statCategoriesLabel')}</span>
               </div>
 
@@ -88,7 +94,9 @@ export default function Home() {
                     <line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" />
                   </svg>
                 </span>
-                <strong className="stat-item-value">{products.reduce((sum, p) => sum + (p.variants?.length || 1), 0) || '—'}</strong>
+                <strong className="stat-item-value">
+                  {loadingProducts ? <span className="stat-spinner" aria-label="loading" /> : products.reduce((sum, p) => sum + (p.variants?.length || 1), 0)}
+                </strong>
                 <span className="stat-item-label">{t('statProductsLabel')}</span>
               </div>
 
