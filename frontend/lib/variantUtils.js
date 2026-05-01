@@ -164,7 +164,9 @@ export function expandProducts(products) {
           const suffix = buildVariantSuffix(variant)
           result.push({
             ...product,
-            name: suffix ? `${product.name} ${suffix}` : product.name,
+            name:   suffix && product.name   ? `${product.name} ${suffix}`   : product.name,
+            nameRu: suffix && product.nameRu ? `${product.nameRu} ${suffix}` : product.nameRu,
+            nameEn: suffix && product.nameEn ? `${product.nameEn} ${suffix}` : product.nameEn,
             price: variant.price,
             stockQuantity: variant.stockQuantity,
             isActive: product.isActive && variant.isActive,
@@ -181,7 +183,9 @@ export function expandProducts(products) {
     const singleSuffix = firstActive ? buildVariantSuffix(firstActive) : ''
     result.push({
       ...product,
-      name: singleSuffix ? `${product.name} ${singleSuffix}` : product.name,
+      name:   singleSuffix && product.name   ? `${product.name} ${singleSuffix}`   : product.name,
+      nameRu: singleSuffix && product.nameRu ? `${product.nameRu} ${singleSuffix}` : product.nameRu,
+      nameEn: singleSuffix && product.nameEn ? `${product.nameEn} ${singleSuffix}` : product.nameEn,
       price: firstActive?.price ?? null,
       stockQuantity: firstActive?.stockQuantity ?? 0,
       _variantId: firstActive?.id ?? null,

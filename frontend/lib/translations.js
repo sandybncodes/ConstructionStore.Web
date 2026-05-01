@@ -230,10 +230,12 @@ export const translations = {
     galleryScrollHint: 'Răsfoiește toate imaginile produsului',
     mainImage: 'Principală',
 
-    // Category names (DB in Romanian — identity mapping for ro)
+    // Category names — LEGACY FALLBACK ONLY for order history strings
+    // New products/categories use nameRu/nameEn fields served directly by the API.
     categoryNames: {},
 
-    // Product names (DB stores names in Romanian — identity mapping for ro)
+    // Product names — LEGACY FALLBACK ONLY for order history strings
+    // New products/categories use nameRu/nameEn fields served directly by the API.
     productNames: {},
   },
 
@@ -467,7 +469,8 @@ export const translations = {
     galleryScrollHint: 'Просмотрите все изображения товара',
     mainImage: 'Основное',
 
-    // Category names (keys = Romanian DB name, values = Russian translation)
+    // Category names — LEGACY FALLBACK ONLY for order history strings
+    // New products/categories use nameRu/nameEn fields served directly by the API.
     categoryNames: {
       'test':                'test',
       'penoplast':           'пенопласт',
@@ -483,7 +486,8 @@ export const translations = {
       'Unelte și Scule':      'Инструменты и Инструмент',
     },
 
-    // Product names (keys = Romanian DB name, values = Russian translation)
+    // Product names — LEGACY FALLBACK ONLY for order history strings
+    // New products/categories use nameRu/nameEn fields served directly by the API.
     productNames: {
       'Penoplast 10 cm':            'Пенопласт 10 см',
       'Penoplast 5 cm':             'Пенопласт 5 см',
@@ -738,7 +742,8 @@ export const translations = {
     galleryScrollHint: 'Browse every image assigned to this product',
     mainImage: 'Main',
 
-    // Category names (keys = Romanian DB name, values = English translation)
+    // Category names — LEGACY FALLBACK ONLY for order history strings
+    // New products/categories use nameRu/nameEn fields served directly by the API.
     categoryNames: {
       'test':                'test',
       'penoplast':           'penoplast',
@@ -754,7 +759,8 @@ export const translations = {
       'Unelte și Scule':      'Tools & Equipment',
     },
 
-    // Product names (keys = Romanian DB name, values = English translation)
+    // Product names — LEGACY FALLBACK ONLY for order history strings
+    // New products/categories use nameRu/nameEn fields served directly by the API.
     productNames: {
       'Penoplast 10 cm':            'EPS Foam Board 10 cm',
       'Penoplast 5 cm':             'EPS Foam Board 5 cm',

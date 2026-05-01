@@ -8,7 +8,7 @@ export default function ProductCard({ product, rating = 4, listMode = false, onA
   const [added, setAdded] = useState(false)
   const [qty, setQty] = useState(1)
   const hasDiscount = product.discount > 0
-  const productName = translateProductName(product.name)
+  const productName = translateProductName(product)
   const productImages = getProductImageSet(product)
   const previewImage = productImages[0]?.imageUrl || getFallbackProductImage()
   const discountedPrice = hasDiscount

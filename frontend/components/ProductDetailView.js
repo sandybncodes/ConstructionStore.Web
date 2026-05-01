@@ -83,10 +83,10 @@ export default function ProductDetailView({ productId, variantId }) {
 
   const images = getProductImageSet(product)
   const variantSuffix = activeVariant ? buildVariantSuffix(activeVariant) : ''
-  const baseProductName = product ? translateProductName(product.name) : ''
+  const baseProductName = product ? translateProductName(product) : ''
   const productName = variantSuffix ? `${baseProductName} ${variantSuffix}` : baseProductName
-  const categoryName = product?.category?.name
-    ? translateCategoryName(product.category.name)
+  const categoryName = product?.category
+    ? translateCategoryName(product.category)
     : '—'
   const currentImage = images[activeImg] ?? images[0]
   const maxQuantity = Math.max(1, activeVariant?.stockQuantity || 1)

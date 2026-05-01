@@ -35,23 +35,49 @@ export function LanguageProvider({ children }) {
   }
 
   /**
-   * Translate a product name stored in Romanian (from DB) to the active language.
-   * Falls back to the original name when no translation is found.
+   * Translate a product name to the active language.
+   *
+   * Accepts either:
+   *   - A product/variant object with { name, nameRu, nameEn } fields (new API)
+   *   - A plain string (legacy — e.g., order-history items stored before this migration)
+   *     In that case the Romanian name is returned as-is for 'ro', and for other
+   *     languages the old static dictionary is used as a best-effort fallback.
    */
-  function translateProductName(name) {
-    if (!name) return name
+  function translateProductName(productOrName) {
+    if (!productOrName) return productOrName
+
+    if (typeof productOrName === 'object') {
+      if (lang === 'ru' && productOrName.nameRu) return productOrName.nameRu
+      if (lang === 'en' && productOrName.nameEn) return productOrName.nameEn
+      return productOrName.name ?? ''
+    }
+
+    // Legacy string path — best-effort dictionary lookup
+    if (lang === 'ro') return productOrName
     const dict = translations[lang] ?? translations[DEFAULT]
-    return dict.productNames?.[name] ?? name
+    return dict.productNames?.[productOrName] ?? productOrName
   }
 
   /**
-   * Translate a category name stored in Romanian (from DB) to the active language.
-   * Falls back to the original name when no translation is found.
+   * Translate a category name to the active language.
+   *
+   * Accepts either:
+   *   - A category object with { name, nameRu, nameEn } fields (new API)
+   *   - A plain string (legacy fallback)
    */
-  function translateCategoryName(name) {
-    if (!name) return name
+  function translateCategoryName(categoryOrName) {
+    if (!categoryOrName) return categoryOrName
+
+    if (typeof categoryOrName === 'object') {
+      if (lang === 'ru' && categoryOrName.nameRu) return categoryOrName.nameRu
+      if (lang === 'en' && categoryOrName.nameEn) return categoryOrName.nameEn
+      return categoryOrName.name ?? ''
+    }
+
+    // Legacy string path — best-effort dictionary lookup
+    if (lang === 'ro') return categoryOrName
     const dict = translations[lang] ?? translations[DEFAULT]
-    return dict.categoryNames?.[name] ?? name
+    return dict.categoryNames?.[categoryOrName] ?? categoryOrName
   }
 
   return (
