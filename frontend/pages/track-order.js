@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Head from 'next/head'
+import Seo from '../components/Seo'
 import Link from 'next/link'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -284,9 +285,7 @@ export default function TrackOrderPage() {
 
   return (
     <>
-      <Head>
-        <title>{t('trackOrderTitle')} — MirDav Company</title>
-      </Head>
+      <Seo title={`${t('trackOrderTitle')} — MirDav Company`} description={`Verifică statusul comenzilor tale la MirDav Company.`} canonical={`${process.env.NEXT_PUBLIC_SITE_URL || ''}/track-order`} />
       <Header />
 
       {/* ── Breadcrumb bar ── */}
@@ -445,6 +444,8 @@ export default function TrackOrderPage() {
                 const isOpen = expandedOrderId === order.id
                 const statusClass = getStatusClass(order.status)
                 const statusLabel = getStatusLabel(order.status)
+                const firstItem = (order.items && order.items.length > 0) ? order.items[0] : null
+
                 return (
                   <div key={order.id} className={`track-accordion-item ${isOpen ? 'is-open' : ''}`}>
                     <button
@@ -462,12 +463,19 @@ export default function TrackOrderPage() {
                           {STEP_ICONS[(order.status ?? '').trim().toUpperCase()]}
                           <span>{statusLabel}</span>
                         </div>
-                        <svg
-                          className={`tah-chevron ${isOpen ? 'tah-chevron--open' : ''}`}
-                          width="20" height="20" viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor" strokeWidth="2.5"
-                          strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
-                        >
+
+                        {firstItem && (
+                          <img
+                            src={firstItem.productImageUrl || FALLBACK_PRODUCT_IMAGE}
+                            alt={firstItem.productName || ``}
+                            className="track-item-img"
+                            loading="lazy"
+                            decoding="async"
+                            onError={e => { e.currentTarget.src = FALLBACK_PRODUCT_IMAGE }}
+                          />
+                        )}
+
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                           <polyline points="6 9 12 15 18 9" />
                         </svg>
                       </div>

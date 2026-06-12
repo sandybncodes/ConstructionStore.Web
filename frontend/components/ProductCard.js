@@ -50,6 +50,8 @@ export default function ProductCard({ product, rating = 4, listMode = false, onA
           <img
             src={previewImage}
             alt={productName}
+            loading="lazy"
+            decoding="async"
             onError={event => {
               event.currentTarget.onerror = null
               event.currentTarget.src = getFallbackProductImage()

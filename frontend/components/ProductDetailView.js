@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Header from './Header'
+import Seo from './Seo'
 import Footer from './Footer'
 import { getProductById } from '../lib/api'
 import { useCart } from '../lib/cartContext'
@@ -176,8 +177,51 @@ export default function ProductDetailView({ productId, variantId }) {
     { key: 'shipping', label: t('tabShipping') },
   ]
 
+  const seoTitle = product ? `${productName} — ${t('siteTitle')}` : t('siteTitle')
+  const seoDescription = shortDescription || t('heroDesc') || ''
+
+  const productStructuredData = product
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: productName,
+        image: images.map(i => i.imageUrl),
+        description: product.description || seoDescription,
+        sku: product.sku || String(product.id),
+        brand: { '@type': 'Brand', name: 'MirDav Company' },
+        offers: {
+          '@type': 'Offer',
+          price: activePrice != null ? String(activePrice) : undefined,
+          priceCurrency: 'MDL',
+          availability: (activeVariant?.stockQuantity || 0) > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+          url: typeof window !== 'undefined' ? window.location.href : undefined,
+        },
+      }
+    : null
+
+  const breadcrumbStructuredData = product
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${process.env.NEXT_PUBLIC_SITE_URL || ''}/` },
+          { '@type': 'ListItem', position: 2, name: 'Products', item: `${process.env.NEXT_PUBLIC_SITE_URL || ''}/products` },
+          ...(product.category ? [{ '@type': 'ListItem', position: 3, name: categoryName, item: `${process.env.NEXT_PUBLIC_SITE_URL || ''}/products?category=${product.categoryId || ''}` }] : []),
+          { '@type': 'ListItem', position: (product.category ? 4 : 3), name: productName, item: typeof window !== 'undefined' ? window.location.href : `${process.env.NEXT_PUBLIC_SITE_URL || ''}/products/${product.id}` },
+        ],
+      }
+    : null
+
+  const combinedStructured = product ? [productStructuredData, breadcrumbStructuredData] : null
+
   return (
     <>
+      <Seo
+        title={seoTitle}
+        description={seoDescription}
+        ogImage={currentImage?.imageUrl}
+        structuredData={combinedStructured}
+      />
       <Header />
       <main>
         <div className="pd-breadcrumb-bar">
@@ -249,6 +293,8 @@ export default function ProductDetailView({ productId, variantId }) {
                         <img
                           src={image.imageUrl}
                           alt=""
+                          loading="lazy"
+                          decoding="async"
                           onError={event => {
                             event.currentTarget.onerror = null
                             event.currentTarget.src = getFallbackProductImage()
@@ -270,6 +316,8 @@ export default function ProductDetailView({ productId, variantId }) {
                       <img
                         src={currentImage?.imageUrl || getFallbackProductImage()}
                         alt={t('productImageAlt', { name: productName, index: activeImg + 1 })}
+                        loading="eager"
+                        decoding="async"
                         onError={event => {
                           event.currentTarget.onerror = null
                           event.currentTarget.src = getFallbackProductImage()
@@ -559,6 +607,8 @@ export default function ProductDetailView({ productId, variantId }) {
             className="pd-lightbox-img"
             src={currentImage?.imageUrl || getFallbackProductImage()}
             alt={t('productImageAlt', { name: productName, index: activeImg + 1 })}
+            loading="eager"
+            decoding="async"
             onClick={e => e.stopPropagation()}
             onError={event => {
               event.currentTarget.onerror = null

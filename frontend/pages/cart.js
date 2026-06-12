@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import Link from 'next/link'
 import Header from '../components/Header'
+import Seo from '../components/Seo'
 import Footer from '../components/Footer'
 import { useCart } from '../lib/cartContext'
 import { createOrder } from '../lib/api'
@@ -119,6 +120,7 @@ export default function CartPage() {
 
   return (
     <>
+      <Seo title={`${t('shoppingCart')} — MirDav Company`} description={`Coșul tău de cumpărături la MirDav Company. Revizuiește și plasează comanda.`} canonical={`${process.env.NEXT_PUBLIC_SITE_URL || ''}/cart`} />
       <Header />
 
       {/* ── Breadcrumb ── */}
@@ -213,6 +215,8 @@ export default function CartPage() {
                               <img
                                 src={getPrimaryProductImage(product)}
                                 alt={product.name}
+                                loading="lazy"
+                                decoding="async"
                               />
                             </div>
                             <div className="cart-item-info">

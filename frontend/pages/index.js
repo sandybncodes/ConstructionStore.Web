@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Header from '../components/Header'
+import Seo from '../components/Seo'
 import Footer from '../components/Footer'
 import Link from 'next/link'
 import { getProducts, getCategories } from '../lib/api'
@@ -25,6 +26,7 @@ export default function Home() {
 
   return (
     <>
+      <Seo title={`${t('heroTitle')} | ${t('siteTitle')}`} description={t('heroDesc')} canonical={`${process.env.NEXT_PUBLIC_SITE_URL || ''}/`} />
       <Header />
       <main>
 
