@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import ProductCard from '../../components/ProductCard'
+import Seo from '../../components/Seo'
 import { getProducts, getCategories } from '../../lib/api'
 import { useCart } from '../../lib/cartContext'
 import { useLanguage } from '../../lib/i18nContext'
@@ -100,6 +101,7 @@ export default function Products() {
 
   return (
     <>
+      <Seo title={`${t('shopPageTitle')} | ${t('siteTitle')}`} description={`${t('shopPageTitle')} — ${t('heroDesc')}`} canonical={`${process.env.NEXT_PUBLIC_SITE_URL || ''}/products`} />
       <Header />
 
       {/* ── Breadcrumb bar ── */}
