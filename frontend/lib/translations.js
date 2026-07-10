@@ -37,8 +37,8 @@ export const translations = {
     footerSecurePayments: 'Achitarea la primirea comenzii',
     footerAbout: 'Program de lucru',
     footerContact: 'Contact',
-    footerSchedule: 'Lun–Vin: 9:00 – 18:00',
-    footerScheduleWeekend: 'Sâm–Dum: 9:00 - 15:00',
+    footerSchedule: 'Lun–Vin: 7:30 – 18:00',
+    footerScheduleWeekend: 'Sâm–Dum: 7:30 - 15:00',
     footerCopyright: '{year} MirDav Company — Toate drepturile rezervate',
 
     // Home page
@@ -277,8 +277,8 @@ export const translations = {
     footerSecurePayments: 'Оплата при получении заказа',
     footerAbout: 'Программа работы',
     footerContact: 'Контакты',
-    footerSchedule: 'Пн–Пт: 9:00 – 18:00',
-    footerScheduleWeekend: 'Сб–Вс: 9:00 - 15:00',
+    footerSchedule: 'Пн–Пт: 7:30 – 18:00',
+    footerScheduleWeekend: 'Сб–Вс: 7:30 - 15:00',
     footerCopyright: '{year} MirDav Company — Все права защищены',
 
     // Home page
@@ -550,8 +550,8 @@ export const translations = {
     footerSecurePayments: 'Payment upon receipt of the order',
     footerAbout: 'Work Schedule',
     footerContact: 'Contact',
-    footerSchedule: 'Mon–Fri: 9am – 6pm',
-    footerScheduleWeekend: 'Sat–Sun: 9am - 3pm',
+    footerSchedule: 'Mon–Fri: 7:30am – 6pm',
+    footerScheduleWeekend: 'Sat–Sun: 7:30am - 3pm',
     footerCopyright: '{year} MirDav Company — All rights reserved',
 
     // Home page

@@ -10,19 +10,10 @@ export default function Footer() {
         <div className="container-main py-5">
           <div className="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4">
 
-            {/*<div className="col">
-              <Link href="/" className="footer-logo-wrap">
-                <img src="/resources/logo-mirdav.svg" alt="Mirdav" className="footer-logo" />
-              </Link>
-              <p>{t('footerTagline')}</p>
-            </div>*/}
-
             <div className="col">
               <h6>{t('footerProducts')}</h6>
               <ul>
                 <li><Link href="/products">{t('footerAllProducts')}</Link></li>
-                {/* <li><Link href="/products">{t('footerBestSellers')}</Link></li> */}
-                {/* <li><Link href="/products">{t('footerNewArrivals')}</Link></li> */}
                 <li><Link href="/products">{t('footerSaleItems')}</Link></li>
               </ul>
             </div>
